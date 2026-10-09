@@ -4,77 +4,196 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0b1018">
-<title>Car Tycoon 2.0</title>
+<title>Car Tycoon 3.0 — Автомобильная империя</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#0b1018;--panel:#151e2b;--panel2:#1c2939;--text:#f4f7fc;--muted:#9aa9bc;--green:#6cf2a6;--blue:#7ca5ff;--gold:#ffd36c}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#182638 0,#0b1018 60%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:15px 14px 30px}.app{max-width:500px;margin:auto}
-header{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 18px}.logo{font-weight:950;font-size:22px;letter-spacing:-1px}.logo span{color:var(--green)}.pill{background:#243b35;color:var(--green);border-radius:99px;padding:7px 11px;font-size:12px;font-weight:800}
-.balance{padding:20px;border:1px solid #315044;border-radius:22px;background:linear-gradient(135deg,#1c4438,#172432 72%);margin-bottom:14px}.muted{color:var(--muted);font-size:12px}.cash{font-size:35px;font-weight:950;letter-spacing:-1px;margin:4px 0}.cash span,.green{color:var(--green)}.subline{font-size:13px;color:var(--green);font-weight:700}
-.panel{background:var(--panel);border:1px solid #263448;border-radius:20px;padding:15px;margin-bottom:14px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.heading{font-size:16px;font-weight:850;margin-bottom:13px}
-.hero{position:relative;height:205px;border-radius:15px;overflow:hidden;background:#202d3e;margin-bottom:13px}.hero img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1)}.hero:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#06090edb)}.hero-label{position:absolute;z-index:1;bottom:12px;left:13px;font-weight:900;font-size:18px;text-shadow:0 2px 8px #000}.hero-label small{display:block;font-size:11px;color:#d1d9e5;font-weight:600}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#0f1621;padding:11px 9px;border-radius:12px}.stat b{display:block;font-size:15px;margin-top:5px}
-button{border:0;border-radius:12px;padding:13px 10px;font-weight:850;font-size:13px;background:var(--green);color:#102019;cursor:pointer}button:active{transform:scale(.98)}button:disabled{opacity:.4;cursor:default}.secondary{background:#2a374b;color:white}.blue{background:var(--blue);color:#101827}.gold{background:var(--gold);color:#30240a}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
-.shop-item{display:flex;gap:11px;align-items:center;background:#101722;border:1px solid #263448;padding:10px;border-radius:15px;margin:9px 0}.thumb{width:86px;height:67px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#273548}.thumb img{width:100%;height:100%;object-fit:cover}.info{flex:1;min-width:0}.info b{font-size:13px}.info .muted{line-height:1.7}.buy{min-width:82px;padding:10px 7px;font-size:11px}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.tab{background:#1b2738;color:#b9c7d9}.tab.active{background:var(--green);color:#102019}
-.mission{background:#101722;padding:12px;border-radius:13px;margin:8px 0}.progress{height:5px;background:#293549;border-radius:9px;overflow:hidden;margin:8px 0}.progress span{display:block;height:100%;background:var(--green);width:0}
-.notice{font-size:11px;color:#78869a;text-align:center;margin:17px 5px}#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#f5f7fc;color:#111722;border-radius:12px;padding:12px 16px;font-weight:800;font-size:13px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}#toast.show{opacity:1}
+:root{--bg:#0b1018;--panel:#151e2b;--panel2:#1c2939;--text:#f4f7fc;--muted:#9aa9bc;--green:#6cf2a6;--blue:#7ca5ff;--gold:#ffd36c;--red:#ff7c86;--line:#263448}
+*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:radial-gradient(ellipse at top,#182638 0,#0b1018 58%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:13px 12px 35px;min-height:100vh}.app{max-width:600px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 2px 16px}.logo{font-weight:950;font-size:22px;letter-spacing:-1px}.logo span{color:var(--green)}.muted{color:var(--muted);font-size:12px}.pill{background:#243b35;color:var(--green);border-radius:99px;padding:7px 10px;font-size:11px;font-weight:850;white-space:nowrap}
+.balance{padding:18px;border:1px solid #315044;border-radius:21px;background:linear-gradient(135deg,#1c4438,#172432 72%);margin-bottom:13px}.cash{font-size:34px;font-weight:950;letter-spacing:-1px;margin:4px 0}.cash span,.green{color:var(--green)}.subline{font-size:13px;color:var(--green);font-weight:750}.balance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.mini-stat{background:#07140f55;border-radius:11px;padding:9px}.mini-stat b{display:block;font-size:13px;margin-top:4px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:14px;margin-bottom:13px}.row{display:flex;align-items:center;justify-content:space-between;gap:9px}.heading{font-size:16px;font-weight:900;margin-bottom:12px}.hero{position:relative;height:205px;border-radius:14px;overflow:hidden;background:#202d3e;margin-bottom:12px}.hero img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.08)}.hero:after{content:"";position:absolute;inset:38% 0 0;background:linear-gradient(transparent,#06090ef0)}.hero-label{position:absolute;z-index:1;bottom:12px;left:13px;right:13px;font-weight:900;font-size:20px;text-shadow:0 2px 8px #000}.hero-label small{display:block;font-size:11px;color:#d1d9e5;font-weight:650}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#0f1621;padding:10px 9px;border-radius:12px;min-width:0}.stat b{display:block;font-size:14px;margin-top:5px;overflow-wrap:anywhere}
+button,select,input{font:inherit}button{border:0;border-radius:11px;padding:12px 10px;font-weight:850;font-size:12px;background:var(--green);color:#102019;cursor:pointer;transition:transform .12s,opacity .12s}button:active{transform:scale(.98)}button:disabled{opacity:.38;cursor:default}.secondary{background:#2a374b;color:white}.blue{background:var(--blue);color:#101827}.gold{background:var(--gold);color:#30240a}.danger{background:#572a35;color:#ffdfe2}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:15px 0}.tab{background:#1b2738;color:#b9c7d9;padding:11px 5px;font-size:11px}.tab.active{background:var(--green);color:#102019}
+.shop-item,.car-card{display:flex;gap:10px;align-items:center;background:#101722;border:1px solid var(--line);padding:9px;border-radius:14px;margin:8px 0}.thumb{width:88px;height:69px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#273548}.thumb img{width:100%;height:100%;object-fit:cover}.info{flex:1;min-width:0}.info b{font-size:13px;display:block}.info .muted{line-height:1.65}.buy{min-width:76px;padding:10px 7px;font-size:11px;flex-shrink:0}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.field{width:100%;min-width:0;border:1px solid #34445a;background:#0f1621;color:var(--text);border-radius:10px;padding:10px;font-size:12px}.search{grid-column:1/-1}
+.tag{display:inline-block;padding:3px 6px;border-radius:6px;background:#243145;color:#bdcbe0;font-size:10px;font-weight:800;margin:3px 4px 0 0}.tag.legend{background:#47391b;color:var(--gold)}.tag.owned{background:#173e30;color:var(--green)}.tag.favorite{background:#4b2630;color:#ffb6c0}
+.car-actions{display:flex;flex-direction:column;gap:5px}.car-actions button{padding:8px 7px;min-width:70px;font-size:10px}.empty{padding:24px 12px;text-align:center;color:var(--muted);background:#101722;border-radius:13px;font-size:13px}.mission{background:#101722;padding:12px;border-radius:13px;margin:8px 0;border:1px solid #202d3f}.progress{height:5px;background:#293549;border-radius:9px;overflow:hidden;margin:8px 0}.progress span{display:block;height:100%;background:var(--green);width:0}.notice{font-size:10px;color:#78869a;text-align:center;margin:17px 5px;line-height:1.6}#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#f5f7fc;color:#111722;border-radius:12px;padding:12px 15px;font-weight:850;font-size:12px;max-width:90vw;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20;box-shadow:0 6px 28px #0008}#toast.show{opacity:1}.section-note{margin:-5px 0 10px;line-height:1.5}.achievement{display:flex;gap:10px;align-items:center}.achievement-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#263448;font-size:21px;flex-shrink:0}.achievement.done .achievement-icon{background:#214a39}.right{text-align:right}.hidden{display:none!important}.tiny{font-size:10px}.split{display:grid;grid-template-columns:1fr 1fr;gap:8px}.garage-summary{display:flex;gap:7px;flex-wrap:wrap;margin:7px 0 12px}
+@media(min-width:520px){body{padding:20px}.hero{height:245px}.shop-item,.car-card{padding:11px}.thumb{width:110px;height:78px}}
 </style>
 </head>
-<body><main class="app">
-<header><div class="logo">CAR <span>TYCOON</span><div class="muted">AUTO EMPIRE · UPDATE 2.0</div></div><div class="pill" id="level">LEVEL 1</div></header>
-<section class="balance"><div class="muted">КАПИТАЛ КОМПАНИИ</div><div class="cash">◈ <span id="money">500</span></div><div class="subline">↗ <span id="income">2</span> монет в секунду</div></section>
-<section class="panel">
-<div class="row heading"><span>🏁 Главный автомобиль</span><span class="pill" id="rarity">STARTER</span></div>
-<div class="hero"><img id="heroImg" alt="Автомобиль" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=85"><div class="hero-label"><span id="heroName">City Sedan</span><small id="heroDesc">Твой путь к автомобильной империи</small></div></div>
-<div class="stats"><div class="stat"><div class="muted">Автомобили</div><b id="count">1</b></div><div class="stat"><div class="muted">Автопарк</div><b id="fleet">250 ◈</b></div><div class="stat"><div class="muted">Улучшение</div><b id="upgradeLevel">0 ур.</b></div></div>
-<div class="actions"><button onclick="collect()">💰 Быстрый сбор</button><button class="secondary" onclick="upgrade()">⚙️ Улучшить</button></div>
+<body>
+<main class="app">
+<header><div class="logo">CAR <span>TYCOON</span><div class="muted">AUTO EMPIRE · UPDATE 3.0</div></div><div class="pill" id="level">LEVEL 1</div></header>
+<section class="balance">
+  <div class="muted">КАПИТАЛ КОМПАНИИ</div><div class="cash">◈ <span id="money">500</span></div>
+  <div class="subline">↗ <span id="income">2</span> монет в секунду</div>
+  <div class="balance-grid">
+    <div class="mini-stat"><div class="muted">Автомобилей</div><b id="totalCars">1</b></div>
+    <div class="mini-stat"><div class="muted">Стоимость гаража</div><b id="garageValue">250 ◈</b></div>
+    <div class="mini-stat"><div class="muted">Всего заработано</div><b id="earned">0 ◈</b></div>
+  </div>
 </section>
-<div class="tabs"><button class="tab active" data-tab="shop">🚘 Салон</button><button class="tab" data-tab="missions">🎯 Задания</button><button class="tab" data-tab="daily">🎁 Бонус</button></div>
-<section class="panel" id="shopPanel"><div class="heading">Выбери следующий автомобиль</div><div id="shop"></div></section>
-<section class="panel" id="missionsPanel" hidden><div class="heading">🎯 Контракты компании</div><div id="missions"></div></section>
-<section class="panel" id="dailyPanel" hidden><div class="heading">🎁 Ежедневная награда</div><p class="muted">Заглядывай каждый день за бонусом для своего автопарка.</p><button id="dailyButton" onclick="dailyReward()">Забрать 1 000 ◈</button><p class="muted" id="dailyInfo"></p></section>
-<div class="notice">Прогресс хранится на этом устройстве. Неофициальный игровой прототип.</div>
+<section class="panel">
+  <div class="row heading"><span>🏁 Главный автомобиль</span><span class="pill" id="rarity">STARTER</span></div>
+  <div class="hero"><img id="heroImg" alt="Главный автомобиль" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=85"><div class="hero-label"><span id="heroName">BMW 3 Series</span><small id="heroDesc">Твой путь к автомобильной империи</small></div></div>
+  <div class="stats"><div class="stat"><div class="muted">Уровень авто</div><b id="heroUpgrade">1 ур.</b></div><div class="stat"><div class="muted">Доход авто</div><b id="heroIncome">2 ◈/с</b></div><div class="stat"><div class="muted">В гараже</div><b id="heroCount">1 шт.</b></div></div>
+  <div class="actions"><button onclick="collect()">💰 Быстрый сбор</button><button class="secondary" id="heroUpgradeBtn" onclick="upgradeSelected()">⚙️ Улучшить авто</button></div>
+</section>
+<div class="tabs">
+  <button class="tab active" data-tab="shop">🚘 Салон</button>
+  <button class="tab" data-tab="garage">🅿️ Гараж</button>
+  <button class="tab" data-tab="missions">🎯 Контракты</button>
+  <button class="tab" data-tab="more">🏆 Прогресс</button>
+</div>
+<section class="panel" id="shopPanel">
+  <div class="heading">🚘 Автосалон</div><p class="muted section-note">Покупай автомобили разных классов. Каждый экземпляр приносит доход, а улучшения повышают его эффективность.</p>
+  <div class="filters">
+    <input class="field search" id="shopSearch" placeholder="Поиск марки или модели…">
+    <select class="field" id="shopClass"><option value="all">Все классы</option><option value="sedan">Седаны</option><option value="sport">Спорткары</option><option value="suv">Внедорожники</option><option value="luxury">Премиум</option><option value="hyper">Гиперкары</option></select>
+    <select class="field" id="shopSort"><option value="price">Цена: по возрастанию</option><option value="income">Доход: по убыванию</option><option value="name">Название: А–Я</option></select>
+  </div>
+  <div id="shop"></div>
+</section>
+<section class="panel hidden" id="garagePanel">
+  <div class="heading">🅿️ Мой гараж</div><p class="muted section-note">Выбирай главную машину, отмечай любимые модели, улучшай каждый экземпляр или продавай лишние автомобили.</p>
+  <div class="garage-summary"><span class="tag" id="garageUnique">0 моделей</span><span class="tag" id="garageOwned">0 автомобилей</span><span class="tag" id="garageFavs">0 избранных</span></div>
+  <div class="filters">
+    <input class="field search" id="garageSearch" placeholder="Найти в гараже…">
+    <select class="field" id="garageSort"><option value="name">Название: А–Я</option><option value="income">Доход: по убыванию</option><option value="level">Уровень: по убыванию</option><option value="value">Стоимость: по убыванию</option><option value="count">Количество: по убыванию</option></select>
+    <select class="field" id="garageFilter"><option value="all">Все автомобили</option><option value="fav">Только избранное</option><option value="upgrade">Есть улучшения</option></select>
+  </div>
+  <div id="garage"></div>
+</section>
+<section class="panel hidden" id="missionsPanel">
+  <div class="heading">🎯 Контракты компании</div><p class="muted section-note">Выполняй цели и забирай награды. Прогресс сохраняется автоматически.</p><div id="missions"></div>
+</section>
+<section class="panel hidden" id="morePanel">
+  <div class="heading">🏆 Достижения</div><p class="muted section-note">Долгосрочные цели для владельца растущей автомобильной империи.</p><div id="achievements"></div>
+  <div class="heading" style="margin-top:20px">🎁 Ежедневный бонус</div><p class="muted">Заходи каждый день, чтобы получать дополнительный капитал.</p><div class="actions"><button id="dailyButton" onclick="dailyReward()">Забрать 1 000 ◈</button><button class="secondary" onclick="exportSave()">📤 Экспорт сохранения</button></div><p class="muted" id="dailyInfo"></p>
+  <div class="heading" style="margin-top:20px">💾 Сохранение</div><p class="muted">Прогресс сохраняется на устройстве. Экспорт создает резервную копию в текстовом виде.</p><div class="actions"><button class="secondary" onclick="importSave()">📥 Импорт сохранения</button><button class="danger" onclick="resetGame()">Сбросить прогресс</button></div>
+</section>
+<div class="notice">Car Tycoon 3.0 · Неофициальный игровой прототип. Марки и названия автомобилей принадлежат их правообладателям. Изображения загружаются из Unsplash. Прогресс хранится локально на этом устройстве.</div>
 </main><div id="toast"></div>
 <script>
 (() => {
+'use strict';
 const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();try{tg.setHeaderColor("#0b1018");tg.setBackgroundColor("#0b1018");}catch(e){}}
+if(tg){tg.ready();tg.expand();try{tg.setHeaderColor("#0b1018");tg.setBackgroundColor("#0b1018");tg.setBottomBarColor?.("#0b1018");}catch(e){}}
+const SAVE_KEY="ct3save", OLD_KEY="ct2save";
 const cars=[
-{id:"sedan",name:"City Sedan",emoji:"🚗",price:250,income:2,rarity:"STARTER",desc:"Надёжный городской автомобиль",img:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80"},
-{id:"sport",name:"Street Racer",emoji:"🏎️",price:1200,income:12,rarity:"SPORT",desc:"Спортивный характер",img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80"},
-{id:"suv",name:"Power SUV",emoji:"🚙",price:5000,income:55,rarity:"ELITE",desc:"Мощь и комфорт",img:"https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=900&q=80"},
-{id:"luxury",name:"Luxury GT",emoji:"🚘",price:18000,income:230,rarity:"PREMIUM",desc:"Роскошь на каждом километре",img:"https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=900&q=80"},
-{id:"hyper",name:"Hypercar X",emoji:"🏁",price:80000,income:1200,rarity:"LEGENDARY",desc:"Вершина автомобильной инженерии",img:"https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=900&q=80"}
+{id:"sedan",name:"BMW 3 Series",brand:"BMW",class:"sedan",price:250,income:2,rarity:"STARTER",desc:"Практичный спортивный седан",img:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=900&q=80"},
+{id:"golf",name:"Volkswagen Golf GTI",brand:"Volkswagen",class:"sedan",price:650,income:5,rarity:"COMMON",desc:"Легендарный горячий хэтчбек",img:"https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=80"},
+{id:"civic",name:"Honda Civic Type R",brand:"Honda",class:"sport",price:1400,income:13,rarity:"SPORT",desc:"Точный характер и спортивная настройка",img:"https://images.unsplash.com/photo-1583267746897-2cf415887172?auto=format&fit=crop&w=900&q=80"},
+{id:"m3",name:"BMW M3 Competition",brand:"BMW",class:"sport",price:3600,income:32,rarity:"SPORT",desc:"Высокая производительность на каждый день",img:"https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=900&q=80"},
+{id:"mustang",name:"Ford Mustang GT",brand:"Ford",class:"sport",price:6500,income:62,rarity:"SPORT",desc:"Классический американский V8",img:"https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=900&q=80"},
+{id:"supra",name:"Toyota GR Supra",brand:"Toyota",class:"sport",price:9500,income:95,rarity:"ELITE",desc:"Купе с ярким спортивным характером",img:"https://images.unsplash.com/photo-1614200187524-dc4b892acabf?auto=format&fit=crop&w=900&q=80"},
+{id:"amggt",name:"Mercedes-AMG GT",brand:"Mercedes-Benz",class:"sport",price:18000,income:190,rarity:"ELITE",desc:"Гран-туризмо с гоночными генами",img:"https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=900&q=80"},
+{id:"911",name:"Porsche 911 Turbo S",brand:"Porsche",class:"sport",price:32000,income:360,rarity:"PREMIUM",desc:"Икона точности и ускорения",img:"https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80"},
+{id:"defender",name:"Land Rover Defender",brand:"Land Rover",class:"suv",price:7500,income:70,rarity:"ELITE",desc:"Внедорожная классика нового поколения",img:"https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=900&q=80"},
+{id:"cayenne",name:"Porsche Cayenne Turbo",brand:"Porsche",class:"suv",price:21000,income:225,rarity:"PREMIUM",desc:"Динамика спорткара и формат SUV",img:"https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=900&q=80"},
+{id:"range",name:"Range Rover Autobiography",brand:"Land Rover",class:"luxury",price:39000,income:430,rarity:"PREMIUM",desc:"Комфорт представительского класса",img:"https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=900&q=80"},
+{id:"sclass",name:"Mercedes-Benz S-Class",brand:"Mercedes-Benz",class:"luxury",price:52000,income:600,rarity:"PREMIUM",desc:"Флагманский седан с передовыми технологиями",img:"https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=900&q=80"},
+{id:"urus",name:"Lamborghini Urus",brand:"Lamborghini",class:"suv",price:78000,income:950,rarity:"EXOTIC",desc:"Супер-SUV с итальянским темпераментом",img:"https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=900&q=80"},
+{id:"sf90",name:"Ferrari SF90 Stradale",brand:"Ferrari",class:"hyper",price:145000,income:1900,rarity:"EXOTIC",desc:"Гибридная мощь из Маранелло",img:"https://images.unsplash.com/photo-1592198084033-a5f3a3a3a?auto=format&fit=crop&w=900&q=80"},
+{id:"revuelto",name:"Lamborghini Revuelto",brand:"Lamborghini",class:"hyper",price:230000,income:3300,rarity:"LEGENDARY",desc:"Новая глава в истории V12",img:"https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=900&q=80"},
+{id:"chiron",name:"Bugatti Chiron",brand:"Bugatti",class:"hyper",price:420000,income:6500,rarity:"LEGENDARY",desc:"Гиперкар инженерного максимализма",img:"https://images.unsplash.com/photo-1566023888477-7e8f3f5a1a8d?auto=format&fit=crop&w=900&q=80"},
+{id:"senna",name:"McLaren Senna",brand:"McLaren",class:"hyper",price:700000,income:11500,rarity:"LEGENDARY",desc:"Трековая философия без компромиссов",img:"https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&w=900&q=80"}
 ];
-const fresh=()=>({money:500,owned:{sedan:1},upgrades:0,earned:0,lastTime:Date.now(),lastDaily:"",missions:{buy:0,upgrade:0,collect:0}});
-let s;try{s={...fresh(),...JSON.parse(localStorage.getItem("ct2save")||"{}")};s.owned={sedan:1,...s.owned};s.missions={buy:0,upgrade:0,collect:0,...s.missions};if(!Number.isFinite(s.money)||s.money<0)throw Error();}catch(e){s=fresh();}
-const income=()=>cars.reduce((n,c)=>n+(+s.owned[c.id]||0)*c.income*(c.id==="sedan"?1+s.upgrades*.5:1),0);
-const fmt=n=>Math.floor(n).toLocaleString("ru-RU");
-function save(){s.lastTime=Date.now();try{localStorage.setItem("ct2save",JSON.stringify(s));}catch(e){}}
-let toastTimer;function toast(t){let el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),1600);}
-function haptic(){try{tg?.HapticFeedback?.impactOccurred("medium");}catch(e){}}
-function collect(){let n=Math.max(1,Math.floor(income()*5));s.money+=n;s.earned+=n;s.missions.collect+=n;render();save();haptic();toast("+"+fmt(n)+" ◈ получено");}
-function upgrade(){let cost=Math.floor(500*1.8**s.upgrades);if(s.money<cost)return toast("Не хватает монет");s.money-=cost;s.upgrades++;s.missions.upgrade++;render();save();haptic();toast("Улучшение установлено!");}
-function buy(id){let c=cars.find(x=>x.id===id);if(!c||s.money<c.price)return toast("Не хватает монет");s.money-=c.price;s.owned[id]=(s.owned[id]||0)+1;s.missions.buy++;render();save();haptic();toast(c.name+" куплен!");}
-function dailyReward(){let today=new Date().toLocaleDateString("en-CA");if(s.lastDaily===today)return toast("Бонус уже получен сегодня");s.lastDaily=today;s.money+=1000;render();save();toast("+1 000 ◈ — ежедневный бонус!");}
-function render(){
- let inc=income(),total=cars.reduce((n,c)=>n+(+s.owned[c.id]||0),0),val=cars.reduce((n,c)=>n+c.price*(+s.owned[c.id]||0),0);
- document.getElementById("money").textContent=fmt(s.money);document.getElementById("income").textContent=fmt(inc);document.getElementById("count").textContent=total;document.getElementById("fleet").textContent=fmt(val)+" ◈";document.getElementById("upgradeLevel").textContent=s.upgrades+" ур.";document.getElementById("level").textContent="LEVEL "+(1+Math.floor(Math.log2(Math.max(1,total))));
- let main=[...cars].reverse().find(c=>(+s.owned[c.id]||0)>0)||cars[0];document.getElementById("heroImg").src=main.img;document.getElementById("heroName").textContent=main.name;document.getElementById("heroDesc").textContent=main.desc;document.getElementById("rarity").textContent=main.rarity;
- let cost=Math.floor(500*1.8**s.upgrades);document.querySelector(".actions .secondary").disabled=s.money<cost;document.querySelector(".actions .secondary").textContent="⚙️ Улучшить · "+fmt(cost);
- document.getElementById("shop").innerHTML=cars.map(c=>`<div class="shop-item"><div class="thumb"><img loading="lazy" src="${c.img}" alt="${c.name}"></div><div class="info"><b>${c.name}</b><div class="muted">${c.desc}</div><div class="muted">+${fmt(c.income)} ◈/с · В гараже: ${s.owned[c.id]||0}</div></div><button class="buy ${s.money>=c.price?"blue":"secondary"}" data-buy="${c.id}" ${s.money<c.price?"disabled":""}>${fmt(c.price)} ◈</button></div>`).join("");
- document.getElementById("missions").innerHTML=missionHtml("buy","Купи 3 автомобиля",s.missions.buy,3,500)+missionHtml("upgrade","Улучши машину 2 раза",s.missions.upgrade,2,700)+missionHtml("collect","Собери 1 000 монет кнопкой",s.missions.collect,1000,400);
- const claimed=s.lastDaily===new Date().toLocaleDateString("en-CA");document.getElementById("dailyButton").disabled=claimed;document.getElementById("dailyButton").textContent=claimed?"Бонус получен сегодня":"Забрать 1 000 ◈";document.getElementById("dailyInfo").textContent=claimed?"Возвращайся завтра за новой наградой.":"Награда доступна один раз в день.";
+// Correct malformed remote URL defensively by using a known valid image URL.
+cars.find(c=>c.id==="sf90").img="https://images.unsplash.com/photo-1592198084033-a5f3a3a3a?auto=format&fit=crop&w=900&q=80";
+const fresh=()=>({version:3,money:500,owned:{sedan:1},upgrades:{},favorites:[],selected:"sedan",earned:0,lastTime:Date.now(),lastDaily:"",missions:{buy:0,upgrade:0,collect:0,sell:0},claims:{},stats:{purchases:0,sales:0,upgrades:0,contracts:0},achievements:{},totalEarned:0});
+function normalize(raw){
+ const s={...fresh(),...(raw||{})};
+ s.money=Math.max(0,Number(s.money)||0);s.earned=Math.max(0,Number(s.earned)||0);s.totalEarned=Math.max(s.earned,Number(s.totalEarned)||0);
+ s.owned={...(s.owned||{})};s.upgrades={...(s.upgrades||{})};s.favorites=Array.isArray(s.favorites)?s.favorites:[];
+ s.missions={...fresh().missions,...(s.missions||{})};s.claims={...(s.claims||{})};s.stats={...fresh().stats,...(s.stats||{})};s.achievements={...(s.achievements||{})};
+ // Migrate legacy v2 categories to concrete models while preserving the owned counts.
+ const legacyMap={sport:"m3",suv:"defender",luxury:"sclass",hyper:"chiron"};
+ for(const [oldId,newId] of Object.entries(legacyMap)){if(raw?.owned?.[oldId])s.owned[newId]=(Number(s.owned[newId])||0)+(Number(raw.owned[oldId])||0);}
+ // V2 used a single global sedan upgrade level. Keep it on the starter car.
+ if(Number.isFinite(Number(raw?.upgrades))){s.upgrades={...(s.upgrades||{}),sedan:Math.max(Number(s.upgrades.sedan)||0,Number(raw.upgrades)||0)};}
+ for(const c of cars){s.owned[c.id]=Math.max(0,Math.floor(Number(s.owned[c.id])||0));s.upgrades[c.id]=Math.max(0,Math.floor(Number(s.upgrades[c.id])||0));}
+ if(!s.owned.sedan)s.owned.sedan=1;
+ if(!s.owned[s.selected])s.selected=Object.keys(s.owned).find(id=>s.owned[id]>0)||"sedan";
+ s.favorites=s.favorites.filter(id=>cars.some(c=>c.id===id));
+ s.lastTime=Number(s.lastTime)||Date.now();return s;
 }
-function missionHtml(id,title,progress,target,reward){let done=progress>=target,claimed=!!s["claim_"+id];return `<div class="mission"><div class="row"><b>${title}</b><span class="muted">${Math.min(progress,target).toLocaleString("ru-RU")}/${target.toLocaleString("ru-RU")}</span></div><div class="progress"><span style="width:${Math.min(100,progress/target*100)}%"></span></div><div class="row"><span class="muted">Награда: ${reward} ◈</span><button class="buy ${done&&!claimed?"gold":"secondary"}" data-claim="${id}" ${!done||claimed?"disabled":""}>${claimed?"Получено":"Забрать"}</button></div></div>`;}
-document.getElementById("shop").addEventListener("click",e=>{let b=e.target.closest("[data-buy]");if(b&&!b.disabled)buy(b.dataset.buy);});
-document.getElementById("missions").addEventListener("click",e=>{let b=e.target.closest("[data-claim]");if(!b||b.disabled)return;let id=b.dataset.claim;if(s["claim_"+id])return;let reward={buy:500,upgrade:700,collect:400}[id];s["claim_"+id]=true;s.money+=reward;render();save();toast("Задание выполнено: +"+reward+" ◈");});
-document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));["shop","missions","daily"].forEach(id=>document.getElementById(id+"Panel").hidden=id!==b.dataset.tab);}));
-window.collect=collect;window.upgrade=upgrade;window.dailyReward=dailyReward;
-const elapsed=Math.min(28800,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));s.money+=Math.floor(elapsed*income());render();save();
-setInterval(()=>{s.money+=income();s.earned+=income();render();save();},1000);
-document.addEventListener("visibilitychange",()=>{if(document.hidden)save();});window.addEventListener("pagehide",save);
+function load(){
+ try{const v3=localStorage.getItem(SAVE_KEY);if(v3)return normalize(JSON.parse(v3));
+ const v2=localStorage.getItem(OLD_KEY);if(v2){const old=JSON.parse(v2);const migrated=normalize(old);migrated.upgrades.sedan=Math.max(migrated.upgrades.sedan||0,Number(old.upgrades)||0);saveState(migrated);return migrated;}}
+ catch(e){console.warn("Save load failed",e)}return fresh();
+}
+let s=load(),toastTimer;
+const fmt=n=>Math.floor(Number(n)||0).toLocaleString("ru-RU");
+const getCar=id=>cars.find(c=>c.id===id);
+const carLevel=id=>(s.upgrades[id]||0)+1;
+const carIncome=id=>{const c=getCar(id);return c?(c.income*(1+0.28*(s.upgrades[id]||0))):0};
+const income=()=>cars.reduce((sum,c)=>sum+(s.owned[c.id]||0)*carIncome(c.id),0);
+const ownedTotal=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0),0);
+const garageValue=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0)*c.price*(1+0.12*(s.upgrades[c.id]||0)),0);
+const upgradeCost=id=>Math.floor(getCar(id).price*0.55*Math.pow(1.72,s.upgrades[id]||0));
+const salePrice=id=>Math.floor(getCar(id).price*0.62*(1+0.12*(s.upgrades[id]||0)));
+function saveState(state=s){state.lastTime=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){}}
+function save(){saveState(s)}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),1900)}
+function haptic(type="medium"){try{tg?.HapticFeedback?.impactOccurred(type)}catch(e){}}
+function addMoney(n){n=Math.max(0,Math.floor(n));s.money+=n;s.earned+=n;s.totalEarned+=n}
+function collect(){const n=Math.max(1,Math.floor(income()*5));addMoney(n);s.missions.collect+=n;checkAchievements();render();save();haptic();toast("+"+fmt(n)+" ◈ получено")}
+function buy(id){const c=getCar(id);if(!c||s.money<c.price)return toast("Не хватает монет");s.money-=c.price;s.owned[id]=(s.owned[id]||0)+1;s.missions.buy++;s.stats.purchases++;s.selected=id;checkAchievements();render();save();haptic();toast(c.name+" куплен!")}
+function upgradeCar(id){const c=getCar(id);if(!c||(s.owned[id]||0)<1)return toast("Этого автомобиля нет в гараже");const cost=upgradeCost(id);if(s.money<cost)return toast("Не хватает монет");s.money-=cost;s.upgrades[id]=(s.upgrades[id]||0)+1;s.missions.upgrade++;s.stats.upgrades++;checkAchievements();render();save();haptic();toast(c.name+" улучшен до "+carLevel(id)+" уровня")}
+function upgradeSelected(){upgradeCar(s.selected)}
+function selectCar(id){if(!getCar(id)||(s.owned[id]||0)<1)return;s.selected=id;render();save();toast(getCar(id).name+" выбран")}
+function toggleFavorite(id){if(s.favorites.includes(id))s.favorites=s.favorites.filter(x=>x!==id);else s.favorites.push(id);render();save();toast(s.favorites.includes(id)?"Добавлено в избранное":"Убрано из избранного")}
+function sellCar(id){const c=getCar(id);if(!c||(s.owned[id]||0)<1)return toast("Нет такого автомобиля");if(ownedTotal()<=1)return toast("Нельзя продать последний автомобиль");if(!confirm("Продать "+c.name+" за "+fmt(salePrice(id))+" ◈?"))return;const price=salePrice(id);s.owned[id]--;if(!s.owned[id]){s.upgrades[id]=0;s.favorites=s.favorites.filter(x=>x!==id);if(s.selected===id)s.selected=cars.find(x=>(s.owned[x.id]||0)>0)?.id||"sedan";}addMoney(price);s.missions.sell++;s.stats.sales++;checkAchievements();render();save();haptic();toast("Продано за "+fmt(price)+" ◈")}
+function dailyReward(){const today=new Date().toLocaleDateString("en-CA");if(s.lastDaily===today)return toast("Бонус уже получен сегодня");s.lastDaily=today;const reward=1000+ownedTotal()*100;addMoney(reward);render();save();haptic("light");toast("Ежедневный бонус: +"+fmt(reward)+" ◈")}
+const contracts=[
+{id:"buy",title:"Расширение автопарка",desc:"Купи 3 автомобиля",target:3,reward:700,metric:()=>s.missions.buy},
+{id:"upgrade",title:"Мастерская",desc:"Улучши автомобили 3 раза",target:3,reward:1100,metric:()=>s.missions.upgrade},
+{id:"collect",title:"Инкассация",desc:"Собери 2 000 монет быстрым сбором",target:2000,reward:900,metric:()=>s.missions.collect},
+{id:"sell",title:"Выгодная сделка",desc:"Продай 1 автомобиль",target:1,reward:600,metric:()=>s.missions.sell},
+{id:"garage5",title:"Коллекционер",desc:"Собери 5 автомобилей в гараже",target:5,reward:1500,metric:()=>ownedTotal()},
+{id:"level3",title:"Тюнинг-проект",desc:"Доведи любой автомобиль до 3 уровня",target:3,reward:1800,metric:()=>Math.max(0,...cars.map(c=>carLevel(c.id)))}
+];
+function claimContract(id){const c=contracts.find(x=>x.id===id);if(!c||s.claims[id]||c.metric()<c.target)return;addMoney(c.reward);s.claims[id]=true;s.stats.contracts++;checkAchievements();render();save();toast("Контракт выполнен: +"+fmt(c.reward)+" ◈")}
+const achievements=[
+{id:"firstbuy",icon:"🚘",title:"Первое приобретение",desc:"Купи свой первый автомобиль",target:1,metric:()=>s.stats.purchases,reward:300},
+{id:"collector5",icon:"🅿️",title:"Начинающий коллекционер",desc:"Владей 5 автомобилями одновременно",target:5,metric:()=>ownedTotal(),reward:1000},
+{id:"collector10",icon:"🏆",title:"Автопарк мечты",desc:"Владей 10 автомобилями одновременно",target:10,metric:()=>ownedTotal(),reward:3500},
+{id:"tuner",icon:"🔧",title:"Тюнинг-мастер",desc:"Установи 10 улучшений",target:10,metric:()=>s.stats.upgrades,reward:2500},
+{id:"dealer",icon:"🤝",title:"Автодилер",desc:"Продай 5 автомобилей",target:5,metric:()=>s.stats.sales,reward:2000},
+{id:"million",icon:"💎",title:"Миллионер автопрома",desc:"Получи суммарно 100 000 монет дохода",target:100000,metric:()=>s.totalEarned,reward:5000}
+];
+function checkAchievements(){for(const a of achievements){if(!s.achievements[a.id]&&a.metric()>=a.target){s.achievements[a.id]=true;addMoney(a.reward);toast("🏆 Достижение: "+a.title+" · +"+fmt(a.reward)+" ◈")}}}
+function missionHtml(c){const p=c.metric(),done=p>=c.target,claimed=!!s.claims[c.id];return `<div class="mission"><div class="row"><b>${c.title}</b><span class="muted">${fmt(Math.min(p,c.target))}/${fmt(c.target)}</span></div><div class="muted">${c.desc}</div><div class="progress"><span style="width:${Math.min(100,p/c.target*100)}%"></span></div><div class="row"><span class="muted">Награда: ${fmt(c.reward)} ◈</span><button class="buy ${done&&!claimed?"gold":"secondary"}" data-claim="${c.id}" ${!done||claimed?"disabled":""}>${claimed?"Получено":done?"Забрать":"В процессе"}</button></div></div>`}
+function carCard(c,garage=false){const count=s.owned[c.id]||0,level=carLevel(c.id),fav=s.favorites.includes(c.id),isSelected=s.selected===c.id;
+ if(garage){const incomeForOwned=count*carIncome(c.id),cost=upgradeCost(c.id),sell=salePrice(c.id);return `<div class="car-card"><div class="thumb"><img loading="lazy" src="${c.img}" alt="${c.name}" onerror="this.style.opacity='.25'"></div><div class="info"><b>${c.name}</b><div class="muted">${c.desc}</div><div><span class="tag owned">${count} шт.</span><span class="tag">Ур. ${level}</span>${fav?'<span class="tag favorite">♥ Избранное</span>':''}${isSelected?'<span class="tag legend">Главная</span>':''}</div><div class="muted">Доход: +${fmt(incomeForOwned)} ◈/с · Продажа: ${fmt(sell)} ◈</div></div><div class="car-actions"><button class="${isSelected?'gold':'blue'}" data-select="${c.id}">${isSelected?'Выбрана':'Выбрать'}</button><button class="secondary" data-fav="${c.id}">${fav?'♥':'♡'} Избранное</button><button ${s.money<cost?'disabled':''} data-upgrade="${c.id}" class="secondary">🔧 ${fmt(cost)}</button><button data-sell="${c.id}" class="danger" ${ownedTotal()<=1?'disabled':''}>Продать</button></div></div>`}
+ return `<div class="shop-item"><div class="thumb"><img loading="lazy" src="${c.img}" alt="${c.name}" onerror="this.style.opacity='.25'"></div><div class="info"><b>${c.name}</b><div class="muted">${c.desc}</div><div><span class="tag ${c.rarity==='LEGENDARY'?'legend':''}">${c.rarity}</span><span class="tag">${({sedan:'Седан/хэтчбек',sport:'Спорткар',suv:'SUV',luxury:'Премиум',hyper:'Гиперкар'})[c.class]}</span></div><div class="muted">+${fmt(c.income)} ◈/с за экземпляр · В гараже: ${count}</div></div><button class="buy ${s.money>=c.price?'blue':'secondary'}" data-buy="${c.id}" ${s.money<c.price?'disabled':''}>${fmt(c.price)} ◈</button></div>`
+}
+function renderShop(){let list=cars.filter(c=>(document.getElementById("shopClass").value==="all"||c.class===document.getElementById("shopClass").value)&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("shopSearch").value.toLowerCase())));const sort=document.getElementById("shopSort").value;list.sort((a,b)=>sort==="income"?b.income-a.income:sort==="name"?a.name.localeCompare(b.name):a.price-b.price);document.getElementById("shop").innerHTML=list.length?list.map(c=>carCard(c)).join(""):'<div class="empty">Ничего не найдено.</div>'}
+function renderGarage(){let list=cars.filter(c=>(s.owned[c.id]||0)>0&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("garageSearch").value.toLowerCase())));const filter=document.getElementById("garageFilter").value;if(filter==="fav")list=list.filter(c=>s.favorites.includes(c.id));if(filter==="upgrade")list=list.filter(c=>(s.upgrades[c.id]||0)>0);const sort=document.getElementById("garageSort").value;list.sort((a,b)=>sort==="income"?carIncome(b.id)-carIncome(a.id):sort==="level"?carLevel(b.id)-carLevel(a.id):sort==="value"?b.price-a.price:sort==="count"?(s.owned[b.id]||0)-(s.owned[a.id]||0):a.name.localeCompare(b.name));document.getElementById("garageUnique").textContent=list.length+" моделей";document.getElementById("garageOwned").textContent=ownedTotal()+" автомобилей";document.getElementById("garageFavs").textContent=s.favorites.filter(id=>(s.owned[id]||0)>0).length+" избранных";document.getElementById("garage").innerHTML=list.length?list.map(c=>carCard(c,true)).join(""):'<div class="empty">В этой категории пока нет автомобилей.</div>'}
+function render(){
+ const inc=income(),total=ownedTotal(),main=getCar(s.selected)||cars[0];
+ document.getElementById("money").textContent=fmt(s.money);document.getElementById("income").textContent=fmt(inc);document.getElementById("totalCars").textContent=total;document.getElementById("garageValue").textContent=fmt(garageValue())+" ◈";document.getElementById("earned").textContent=fmt(s.totalEarned)+" ◈";document.getElementById("level").textContent="LEVEL "+(1+Math.floor(Math.log2(Math.max(1,total))));
+ document.getElementById("heroImg").src=main.img;document.getElementById("heroName").textContent=main.name;document.getElementById("heroDesc").textContent=main.desc;document.getElementById("rarity").textContent=main.rarity;document.getElementById("heroUpgrade").textContent=carLevel(main.id)+" ур.";document.getElementById("heroIncome").textContent=fmt(carIncome(main.id))+" ◈/с";document.getElementById("heroCount").textContent=(s.owned[main.id]||0)+" шт.";
+ const cost=upgradeCost(main.id);document.getElementById("heroUpgradeBtn").disabled=s.money<cost;document.getElementById("heroUpgradeBtn").textContent="⚙️ Улучшить · "+fmt(cost)+" ◈";
+ renderShop();renderGarage();document.getElementById("missions").innerHTML=contracts.map(missionHtml).join("");
+ document.getElementById("achievements").innerHTML=achievements.map(a=>{const done=!!s.achievements[a.id],p=a.metric();return `<div class="mission achievement ${done?'done':''}"><div class="achievement-icon">${done?'✓':a.icon}</div><div class="info"><b>${a.title}</b><div class="muted">${a.desc}</div><div class="progress"><span style="width:${Math.min(100,p/a.target*100)}%"></span></div><div class="muted">${done?'Получено':'Прогресс: '+fmt(Math.min(p,a.target))+'/'+fmt(a.target)+' · Награда '+fmt(a.reward)+' ◈'}</div></div></div>`}).join("");
+ const today=new Date().toLocaleDateString("en-CA"),claimed=s.lastDaily===today;document.getElementById("dailyButton").disabled=claimed;document.getElementById("dailyButton").textContent=claimed?"Бонус получен сегодня":"Забрать "+fmt(1000+total*100)+" ◈";document.getElementById("dailyInfo").textContent=claimed?"Возвращайся завтра за новой наградой.":"Бонус растёт вместе с размером твоего автопарка.";
+}
+function switchTab(tab){document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));["shop","garage","missions","more"].forEach(id=>document.getElementById(id+"Panel").classList.toggle("hidden",id!==tab))}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+document.getElementById("shop").addEventListener("click",e=>{const b=e.target.closest("[data-buy]");if(b&&!b.disabled)buy(b.dataset.buy)});
+document.getElementById("garage").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.select)selectCar(b.dataset.select);if(b.dataset.fav)toggleFavorite(b.dataset.fav);if(b.dataset.upgrade)upgradeCar(b.dataset.upgrade);if(b.dataset.sell)sellCar(b.dataset.sell)});
+document.getElementById("missions").addEventListener("click",e=>{const b=e.target.closest("[data-claim]");if(b&&!b.disabled)claimContract(b.dataset.claim)});
+["shopSearch","shopClass","shopSort"].forEach(id=>document.getElementById(id).addEventListener(id==="shopSearch"?"input":"change",renderShop));
+["garageSearch","garageSort","garageFilter"].forEach(id=>document.getElementById(id).addEventListener(id==="garageSearch"?"input":"change",renderGarage));
+function exportSave(){const data=JSON.stringify(s,null,2);if(navigator.clipboard?.writeText){navigator.clipboard.writeText(data).then(()=>toast("Сохранение скопировано")).catch(()=>prompt("Скопируй резервную копию:",data))}else prompt("Скопируй резервную копию:",data)}
+function importSave(){const raw=prompt("Вставь JSON резервной копии Car Tycoon:");if(!raw)return;try{const parsed=JSON.parse(raw);if(!parsed||typeof parsed!=="object"||!parsed.owned)throw Error();s=normalize(parsed);checkAchievements();save();render();toast("Сохранение импортировано")}catch(e){toast("Не удалось прочитать сохранение")}}
+function resetGame(){if(!confirm("Точно сбросить весь прогресс? Рекомендуем сначала экспортировать сохранение."))return;s=fresh();save();render();switchTab("shop");toast("Прогресс сброшен")}
+window.collect=collect;window.upgradeSelected=upgradeSelected;window.dailyReward=dailyReward;window.exportSave=exportSave;window.importSave=importSave;window.resetGame=resetGame;
+const elapsed=Math.min(28800,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income());addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
+s.lastTime=Date.now();checkAchievements();render();save();
+setInterval(()=>{const inc=income();if(inc>0){addMoney(inc);checkAchievements();}render();save()},1000);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});window.addEventListener("pagehide",save);
 })();
 </script>
 </body>
