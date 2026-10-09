@@ -1,0 +1,389 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#10131c">
+<title>Car Tycoon</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+:root {
+  --bg: #10131c;
+  --card: #1b2030;
+  --text: #f5f7ff;
+  --muted: #929bb2;
+  --accent: #60f0a0;
+  --blue: #7196ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 16px 15px 30px;
+  user-select: none;
+}
+.app { max-width: 480px; margin: auto; }
+header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 22px;
+}
+.logo { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
+.logo span { color: var(--accent); }
+.level {
+  background: #293b35; color: var(--accent);
+  border-radius: 20px; padding: 7px 12px;
+  font-size: 12px; font-weight: 800;
+}
+.balance-card {
+  background: linear-gradient(135deg, #263e39, #1b2730 70%);
+  border: 1px solid #365b4c; border-radius: 22px;
+  padding: 21px; margin-bottom: 16px;
+}
+.small { color: var(--muted); font-size: 13px; }
+.money { font-size: 35px; font-weight: 900; margin: 7px 0; }
+.money span { color: var(--accent); }
+.income { color: var(--accent); font-size: 13px; font-weight: 700; }
+.garage {
+  background: var(--card); border-radius: 22px;
+  padding: 17px; margin-bottom: 19px;
+  border: 1px solid #2a3042;
+}
+.section-title {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 15px;
+  font-weight: 800; font-size: 16px;
+}
+.car-scene {
+  height: 160px; border-radius: 16px;
+  background: radial-gradient(ellipse at 50% 65%, #394658, #202738 65%);
+  display: flex; align-items: center;
+  justify-content: center; position: relative;
+  overflow: hidden; margin-bottom: 15px;
+}
+.car-scene::after {
+  content: ""; position: absolute; bottom: 20px;
+  width: 85%; height: 2px; background: #718094;
+  opacity: .35;
+}
+.car-emoji {
+  font-size: 85px; z-index: 1;
+  filter: drop-shadow(0 10px 10px #0007);
+  transition: transform .15s;
+}
+.car-scene:active .car-emoji { transform: scale(.94); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat {
+  padding: 12px; background: #131824; border-radius: 13px;
+}
+.stat b { display: block; margin-top: 5px; font-size: 17px; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 13px; }
+button {
+  border: 0; padding: 14px 9px; border-radius: 13px;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  color: #10151c; background: var(--accent);
+  transition: opacity .15s, transform .1s;
+}
+button:active { transform: scale(.97); }
+button:disabled { opacity: .4; cursor: default; }
+button.secondary { background: #303950; color: white; }
+button.blue { background: var(--blue); color: #111827; }
+.subtitle { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.shop-title { font-size: 18px; font-weight: 900; margin: 24px 0 12px; }
+.shop-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1px solid #2a3042;
+  border-radius: 17px; padding: 13px; margin-bottom: 10px;
+}
+.car-icon {
+  width: 55px; height: 55px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border-radius: 14px; background: #282f43; font-size: 30px;
+}
+.car-info { flex: 1; min-width: 0; }
+.car-info b { font-size: 14px; }
+.car-info .subtitle { line-height: 1.6; }
+.buy {
+  padding: 11px 10px; min-width: 91px;
+  font-size: 12px; border-radius: 11px;
+}
+.footer {
+  text-align: center; color: #626c81;
+  font-size: 11px; padding: 18px 0;
+}
+#toast {
+  position: fixed; bottom: 25px; left: 50%;
+  transform: translateX(-50%);
+  background: #f5f7ff; color: #111827;
+  padding: 12px 18px; border-radius: 12px;
+  font-size: 13px; font-weight: 800;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s; white-space: nowrap;
+  z-index: 10;
+}
+#toast.show { opacity: 1; }
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div class="logo">CAR <span>TYCOON</span></div>
+    <div class="level" id="level">LEVEL 1</div>
+  </header>
+
+  <section class="balance-card">
+    <div class="small">КАПИТАЛ КОМПАНИИ</div>
+    <div class="money"><span>◈</span> <b id="money">500</b></div>
+    <div class="income">↗ <span id="income">2</span> монет / сек</div>
+  </section>
+
+  <section class="garage">
+    <div class="section-title">
+      <span>🏁 Мой гараж</span>
+      <span class="small" id="carCount">1 машина</span>
+    </div>
+
+    <div class="car-scene">
+      <div class="car-emoji" id="mainCar">🚗</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="small">Стоимость автопарка</div>
+        <b id="fleetValue">250 ◈</b>
+      </div>
+      <div class="stat">
+        <div class="small">Общий доход</div>
+        <b id="totalIncome">2 ◈/с</b>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button onclick="collect()">💰 Собрать прибыль</button>
+      <button class="secondary" onclick="upgrade()">⚙️ Улучшить</button>
+    </div>
+    <div class="subtitle" id="upgradeInfo">Улучшение увеличивает доход основной машины.</div>
+  </section>
+
+  <div class="shop-title">🚘 Автосалон</div>
+  <div id="shop"></div>
+
+  <div class="footer">CAR TYCOON · Построй свою автомобильную империю</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(() => {
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    try { tg.setHeaderColor("#10131c"); } catch (e) {}
+    try { tg.setBackgroundColor("#10131c"); } catch (e) {}
+  }
+
+  const cars = [
+    { id: "sedan", name: "City Sedan", emoji: "🚗",
+      price: 250, income: 2, description: "Надёжная городская машина" },
+    { id: "sport", name: "Street Racer", emoji: "🏎️",
+      price: 1200, income: 12, description: "Скорость приносит деньги" },
+    { id: "suv", name: "Power SUV", emoji: "🚙",
+      price: 5000, income: 55, description: "Мощный внедорожник" },
+    { id: "luxury", name: "Luxury GT", emoji: "🚘",
+      price: 18000, income: 230, description: "Премиум-класс" },
+    { id: "hyper", name: "Hypercar X", emoji: "🏁",
+      price: 80000, income: 1200, description: "Легенда автоспорта" }
+  ];
+
+  const defaults = {
+    money: 500,
+    owned: { sedan: 1 },
+    upgrades: 0,
+    earned: 0,
+    lastTime: Date.now()
+  };
+
+  let state;
+  try {
+    state = Object.assign({}, defaults,
+      JSON.parse(localStorage.getItem("carTycoonSave") || "{}"));
+    state.owned = Object.assign({}, defaults.owned, state.owned || {});
+    if (!Number.isFinite(state.money) || state.money < 0) throw Error();
+    state.upgrades = Math.max(0, Number(state.upgrades) || 0);
+    state.earned = Math.max(0, Number(state.earned) || 0);
+  } catch {
+    state = JSON.parse(JSON.stringify(defaults));
+  }
+
+  // Ограничиваем офлайн-доход 8 часами.
+  const elapsed = Math.min(
+    8 * 60 * 60,
+    Math.max(0, (Date.now() - (state.lastTime || Date.now())) / 1000)
+  );
+
+  function incomePerSecond() {
+    return cars.reduce((sum, car) => {
+      const count = Math.max(0, Number(state.owned[car.id]) || 0);
+      const multiplier = car.id === "sedan"
+        ? 1 + state.upgrades * 0.5 : 1;
+      return sum + count * car.income * multiplier;
+    }, 0);
+  }
+
+  state.money += Math.floor(elapsed * incomePerSecond());
+  state.lastTime = Date.now();
+
+  function format(n) {
+    n = Math.floor(n);
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+    if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+    if (n >= 1e4) return (n / 1e3).toFixed(1) + "K";
+    return n.toLocaleString("ru-RU");
+  }
+
+  function save() {
+    state.lastTime = Date.now();
+    try {
+      localStorage.setItem("carTycoonSave", JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  let toastTimer;
+  function toast(message) {
+    const el = document.getElementById("toast");
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 1700);
+  }
+
+  function haptic(type = "light") {
+    try { tg?.HapticFeedback?.impactOccurred(type); } catch (e) {}
+  }
+
+  function collect() {
+    const bonus = Math.max(1, Math.floor(incomePerSecond() * 5));
+    state.money += bonus;
+    state.earned += bonus;
+    render();
+    save();
+    haptic("medium");
+    toast("+" + format(bonus) + " ◈ в кассу!");
+  }
+
+  function upgrade() {
+    const cost = Math.floor(500 * Math.pow(1.8, state.upgrades));
+    if (state.money < cost) {
+      toast("Недостаточно монет!");
+      haptic("light");
+      return;
+    }
+    state.money -= cost;
+    state.upgrades++;
+    render();
+    save();
+    haptic("medium");
+    toast("Машина улучшена!");
+  }
+
+  function buy(id) {
+    const car = cars.find(c => c.id === id);
+    if (!car) return;
+    if (state.money < car.price) {
+      toast("Нужно больше монет!");
+      haptic("light");
+      return;
+    }
+    state.money -= car.price;
+    state.owned[id] = (Number(state.owned[id]) || 0) + 1;
+    render();
+    save();
+    haptic("medium");
+    toast(car.name + " куплен!");
+  }
+
+  function render() {
+    const income = incomePerSecond();
+    const totalCars = cars.reduce((s, c) =>
+      s + (Number(state.owned[c.id]) || 0), 0);
+    const fleet = cars.reduce((s, c) =>
+      s + c.price * (Number(state.owned[c.id]) || 0), 0);
+
+    document.getElementById("money").textContent = format(state.money);
+    document.getElementById("income").textContent = format(income);
+    document.getElementById("totalIncome").textContent =
+      format(income) + " ◈/с";
+    document.getElementById("fleetValue").textContent =
+      format(fleet) + " ◈";
+    document.getElementById("carCount").textContent =
+      totalCars + (totalCars === 1 ? " машина" :
+      totalCars < 5 ? " машины" : " машин");
+
+    document.getElementById("level").textContent =
+      "LEVEL " + (1 + Math.floor(Math.log2(Math.max(1, totalCars))));
+
+    const main = [...cars].reverse().find(c =>
+      (Number(state.owned[c.id]) || 0) > 0);
+    document.getElementById("mainCar").textContent = main.emoji;
+
+    const cost = Math.floor(500 * Math.pow(1.8, state.upgrades));
+    document.getElementById("upgradeInfo").textContent =
+      "Уровень " + state.upgrades + " · Следующее улучшение: " +
+      format(cost) + " ◈";
+
+    document.querySelector(".actions button.secondary").disabled =
+      state.money < cost;
+
+    document.getElementById("shop").innerHTML = cars.map(car => {
+      const count = Number(state.owned[car.id]) || 0;
+      const canBuy = state.money >= car.price;
+      return `
+        <div class="shop-item">
+          <div class="car-icon">${car.emoji}</div>
+          <div class="car-info">
+            <b>${car.name}</b>
+            <div class="subtitle">${car.description}</div>
+            <div class="subtitle">+${format(car.income)} ◈/с · В гараже: ${count}</div>
+          </div>
+          <button class="buy ${canBuy ? "blue" : "secondary"}"
+            data-buy="${car.id}" ${canBuy ? "" : "disabled"}>
+            ${format(car.price)} ◈
+          </button>
+        </div>`;
+    }).join("");
+  }
+
+  document.getElementById("shop").addEventListener("click", e => {
+    const btn = e.target.closest("[data-buy]");
+    if (btn && !btn.disabled) buy(btn.dataset.buy);
+  });
+
+  window.collect = collect;
+  window.upgrade = upgrade;
+
+  render();
+  save();
+
+  setInterval(() => {
+    const income = incomePerSecond();
+    state.money += income;
+    state.earned += income;
+    render();
+    save();
+  }, 1000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") save();
+  });
+
+  window.addEventListener("beforeunload", save);
+})();
+</script>
+</body>
+</html>
