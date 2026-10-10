@@ -327,13 +327,37 @@ button{background:#78b7b0!important;color:#102022!important;box-shadow:0 2px 0 #
 .pe-rules{font-size:11px;line-height:1.55;color:#8fa0ac}
 @media(max-width:480px){.pe-car{display:none}.pe-draft{flex-direction:column;align-items:stretch}.pe-draft #platePreview{flex-basis:auto;width:100%;max-width:260px;margin:0 auto}.pe-actions{grid-template-columns:1fr}}
 </style>
+<style id="update-5-1-cases">
+.case-picker{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:4px 0 12px}
+button.case-opt{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:11px 12px;text-align:left;background:#1a2630!important;color:#dfe8ee!important;border:1px solid #34454f;box-shadow:none!important;border-radius:11px}
+button.case-opt b{font-size:12px;letter-spacing:.8px}button.case-opt small{font-size:10px;font-weight:600;color:#8fa0ac}
+button.case-opt.active{background:#243a36!important;border-color:#78b7b0}
+button.case-opt[data-case=tuner].active{background:#2a2040!important;border-color:#b98cff}
+.loot-case.tuner .case-lid{border-color:#cdb6ff;background:linear-gradient(180deg,#8a73b8,#41325f 60%,#271d3e)}
+.loot-case.tuner .case-body{border-color:#a98bff;background:linear-gradient(145deg,#4c3b73,#1e1636 55%,#130e24)}
+.loot-case.tuner .case-stripe{background:linear-gradient(90deg,#b98cff,#ffd98a,#7a52b3);box-shadow:0 0 12px #b98cff55}
+.loot-case.tuner .case-emblem{color:#ffd98a;border-color:#cdb6ff}
+.loot-case.tuner .case-lock{color:#ffd98a;text-shadow:0 0 8px #ffd98a77}
+.loot-case.tuner.case-opening,.loot-case.tuner.case-opened{filter:drop-shadow(0 0 18px #b98cff77)}
+.prize-title{margin:16px 0 8px;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8fa0ac}
+.prize-list{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.prize-row{display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:center;padding:8px 10px;background:#0f161c;border:1px solid #26343e;border-left:3px solid #5b6b76;border-radius:10px}
+.prize-row b{display:block;font-size:12px;color:#eef3f6}.prize-row small{display:block;font-size:10px;color:#8fa0ac;line-height:1.3}
+.prize-row i{font-style:normal;font-size:12px;font-weight:800;color:#b4c0c8}.pr-ico{font-size:19px;text-align:center}
+.pr-rare{border-left-color:#5aa9ff}.pr-rare i{color:#8cc2ff}
+.pr-epic{border-left-color:#a98bff}.pr-epic i{color:#cfaeff}
+.pr-jp{border-left-color:#ffcf55;background:linear-gradient(110deg,#2a210c,#0f161c)}.pr-jp i{color:#ffd98a}
+.case-log-row{display:flex;justify-content:space-between;gap:10px;padding:7px 10px;margin-bottom:5px;background:#0c1318;border-radius:8px;font-size:11px;color:#8fa0ac}.case-log-row b{color:#dfe8ee;text-align:right}
+.boost-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;background:#2a210c;color:#ffd98a;border:1px solid #b58a2e}
+@media(max-width:520px){.prize-list{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <main class="app">
 <header><div class="logo">CAR <span>TYCOON</span><div class="muted">STREET GARAGE · UPDATE 5.0</div></div><div class="pill" id="level">LEVEL 1</div></header>
 <section class="balance">
   <div class="muted">КАПИТАЛ КОМПАНИИ</div><div class="cash">◈ <span id="money">500</span></div>
-  <div class="subline">↗ <span id="income">2</span> монет в секунду</div>
+  <div class="subline">↗ <span id="income">2</span> монет в секунду<span class="boost-tag hidden" id="boostTag"></span></div>
   <div class="balance-grid">
     <div class="mini-stat"><div class="muted">Автомобилей</div><b id="totalCars">1</b></div>
     <div class="mini-stat"><div class="muted">Стоимость гаража</div><b id="garageValue">250 ◈</b></div>
@@ -350,7 +374,7 @@ button{background:#78b7b0!important;color:#102022!important;box-shadow:0 2px 0 #
 <div class="tabs">
   <button class="tab active" data-tab="shop"><span class="ui-icon">🚘</span>Автосалон</button>
   <button class="tab" data-tab="garage"><span class="ui-icon">🅿️</span>Мой гараж</button>
-  <button class="tab" data-tab="roulette"><span class="ui-icon">🎡</span>Рулетка</button>
+  <button class="tab" data-tab="roulette"><span class="ui-icon">🎡</span>Кейсы</button>
   <button class="tab" data-tab="ranking"><span class="ui-icon">🏆</span>Топ игроков</button>
 </div>
 <section class="panel" id="shopPanel">
@@ -380,21 +404,27 @@ button{background:#78b7b0!important;color:#102022!important;box-shadow:0 2px 0 #
   <div id="garage"></div>
 </section>
 <section class="panel hidden" id="roulettePanel">
-  <div class="heading">🎡 Колесо удачи</div>
-  <p class="muted section-note">Открой кейс за 100 000 ◈: от 25 000 до 500 000 ◈, случайный автомобиль (до 150 000 ◈) или секретная BMW M5 E60 (шанс 1%).</p>
+  <div class="heading">🎡 Кейсы</div>
+  <p class="muted section-note" id="caseNote"></p>
+  <div class="case-picker" id="casePicker">
+    <button type="button" class="case-opt active" data-case="street"><b>STREET GARAGE</b><small>100 000 ◈ · деньги и авто</small></button>
+    <button type="button" class="case-opt" data-case="tuner"><b>NIGHT TUNER</b><small>250 000 ◈ · бусты, номера, гиперкары</small></button>
+  </div>
   <div class="case-stage" id="caseStage" aria-label="Кейс с наградами">
     <div class="case-glow"></div>
-    <div class="loot-case" id="lootCase" role="img" aria-label="Закрытый кейс Street Garage">
+    <div class="loot-case" id="lootCase" role="img" aria-label="Кейс">
       <div class="case-lid"><span class="case-brand">STREET GARAGE</span><span class="case-lock">◆</span></div>
       <div class="case-body"><span class="case-stripe"></span><span class="case-emblem">CT</span><span class="case-rivet rivet-a"></span><span class="case-rivet rivet-b"></span></div>
       <div class="case-base"></div>
     </div>
     <div class="prize-burst" id="prizeBurst" aria-live="polite"><span class="prize-burst-icon">✦</span><span class="prize-burst-title">НАГРАДА</span><span class="prize-burst-name" id="prizeBurstName">?</span></div>
-    <div class="case-prompt" id="casePrompt">Кейс Street Garage · 7 возможных наград</div>
+    <div class="case-prompt" id="casePrompt"></div>
   </div>
   <div class="roulette-result" id="rouletteResult">Твой следующий приз может быть здесь</div>
-  <button id="spinRouletteBtn" class="roulette-spin">📦 Открыть кейс · 100 000 ◈</button>
-  <div class="muted" style="margin-top:10px;text-align:center">В кейсе: деньги, случайный автомобиль или секретная BMW M5 E60 (шанс 1%).</div>
+  <button id="spinRouletteBtn" class="roulette-spin">📦 Открыть кейс</button>
+  <div class="prize-title">Что может выпасть</div>
+  <div class="prize-list" id="prizeList"></div>
+  <div id="caseLog"></div>
 </section>
 <section class="panel hidden" id="rankingPanel">
   <div class="ranking-head"><div><div class="heading" style="margin-bottom:4px">🏆 Глобальный рейтинг</div><div class="muted">Игроки с самым большим капиталом</div></div><button class="rank-refresh" id="refreshLeaderboard">↻ Обновить</button></div>
@@ -538,7 +568,8 @@ let incomeCarry=0;
 const getCar=id=>cars.find(c=>c.id===id);
 const carLevel=id=>(s.upgrades[id]||0)+1;
 const carIncome=id=>{const c=getCar(id);return c?(c.income*0.30*(1+0.15*(s.upgrades[id]||0))):0};
-const income=()=>cars.reduce((sum,c)=>sum+(s.owned[c.id]||0)*carIncome(c.id),0);
+const boostMult=()=>(s.boost&&s.boost.until>Date.now())?(Number(s.boost.mult)||1):1;
+const income=()=>cars.reduce((sum,c)=>sum+(s.owned[c.id]||0)*carIncome(c.id),0)*boostMult();
 const ownedTotal=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0),0);
 const basePrice=c=>c.id==="bmwm5e60"?98000:c.price;
 const garageValue=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0)*basePrice(c)*(1+0.12*(s.upgrades[c.id]||0)),0);
@@ -737,7 +768,7 @@ function renderShop(){let list=cars.filter(c=>(document.getElementById("shopClas
 function renderGarage(){let list=cars.filter(c=>(s.owned[c.id]||0)>0&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("garageSearch").value.toLowerCase())));const filter=document.getElementById("garageFilter").value;if(filter==="upgrade")list=list.filter(c=>(s.upgrades[c.id]||0)>0);const sort=document.getElementById("garageSort").value;list.sort((a,b)=>sort==="income"?carIncome(b.id)-carIncome(a.id):sort==="level"?carLevel(b.id)-carLevel(a.id):sort==="value"?basePrice(b)-basePrice(a):sort==="count"?(s.owned[b.id]||0)-(s.owned[a.id]||0):a.name.localeCompare(b.name));document.getElementById("garageUnique").textContent=list.length+" моделей";document.getElementById("garageOwned").textContent=ownedTotal()+" автомобилей";document.getElementById("garage").innerHTML=list.length?list.map(c=>carCard(c,true)).join(""):'<div class="empty">В этой категории пока нет автомобилей.</div>'}
 function renderStats(){
  const inc=income(),total=ownedTotal(),main=getCar(s.selected)||cars[0];
- document.getElementById("money").textContent=fmt(s.money);document.getElementById("income").textContent=fmtRate(inc);document.getElementById("totalCars").textContent=total;document.getElementById("garageValue").textContent=fmt(garageValue())+" ◈";document.getElementById("earned").textContent=fmt(s.totalEarned)+" ◈";document.getElementById("level").textContent="LEVEL "+(1+Math.floor(Math.log2(Math.max(1,total))));
+ document.getElementById("money").textContent=fmt(s.money);document.getElementById("income").textContent=fmtRate(inc);updateBoostTag();document.getElementById("totalCars").textContent=total;document.getElementById("garageValue").textContent=fmt(garageValue())+" ◈";document.getElementById("earned").textContent=fmt(s.totalEarned)+" ◈";document.getElementById("level").textContent="LEVEL "+(1+Math.floor(Math.log2(Math.max(1,total))));
  const hero=document.getElementById("heroImg");
  if(hero.dataset.carId!==main.id){hero.dataset.carId=main.id;hero.dataset.fallback=main.fallbackImg||main.img;hero.dataset.stock=main.stockImg||main.img;hero.onerror=function(){if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else if(this.dataset.stock&&this.src!==this.dataset.stock){this.src=this.dataset.stock}else{this.onerror=null;this.src=NO_CAR_PHOTO;this.alt="Фото временно недоступно"}};hero.src=main.img;}
  document.getElementById("heroName").textContent=main.name;document.getElementById("heroDesc").textContent=main.desc;document.getElementById("rarity").textContent=main.rarity;document.getElementById("heroUpgrade").textContent=carLevel(main.id)+" ур.";document.getElementById("heroIncome").textContent=fmtRate(carIncome(main.id))+" ◈/с";document.getElementById("heroCount").textContent=(s.owned[main.id]||0)+" шт.";renderHeroExtras(main);
@@ -745,76 +776,139 @@ function renderStats(){
  document.querySelectorAll("[data-buy]").forEach(b=>{const c=getCar(b.dataset.buy);if(c)b.disabled=!!s.owned[c.id]||s.money<c.price});
  document.querySelectorAll("[data-upgrade]").forEach(b=>{const c=getCar(b.dataset.upgrade);if(c)b.disabled=s.money<upgradeCost(c.id)});
 }
-let rouletteBusy=false;
-const ROULETTE_COST=100000;
-const ROULETTE_CAR_MAX_PRICE=150000; // авто-приз выбирается только из моделей до этой цены
-// Награды рулетки: сумма весов равна 100. Улучшений в рулетке больше нет.
-const roulettePrizes=[
- {label:"25 000 ◈",weight:28,type:"money",amount:25000},
- {label:"50 000 ◈",weight:24,type:"money",amount:50000},
- {label:"100 000 ◈",weight:18,type:"money",amount:100000},
- {label:"200 000 ◈",weight:9,type:"money",amount:200000},
- {label:"500 000 ◈",weight:3,type:"money",amount:500000},
- {label:"СЛУЧАЙНОЕ АВТО",weight:17,type:"car"},
- {label:"BMW M5 E60",weight:1,type:"secret"}
-];
-function chooseRoulettePrize(){
- const total=roulettePrizes.reduce((sum,p)=>sum+p.weight,0);
- let ticket=Math.random()*total;
- for(let i=0;i<roulettePrizes.length;i++){ticket-=roulettePrizes[i].weight;if(ticket<0)return {prize:roulettePrizes[i],index:i};}
- return {prize:roulettePrizes[roulettePrizes.length-1],index:roulettePrizes.length-1};
+let rouletteBusy=false,currentCase="street",lastPrizeName="";
+const ROULETTE_CAR_MAX_PRICE=150000;
+const CASES={
+ street:{name:"STREET GARAGE",emblem:"CT",cost:100000,note:"Классический кейс: деньги, случайный автомобиль до 150 000 ◈ или секретная BMW M5 E60.",prizes:[
+  {label:"25 000 ◈",weight:28,type:"money",amount:25000,icon:"◈",desc:"Деньги"},
+  {label:"50 000 ◈",weight:24,type:"money",amount:50000,icon:"◈",desc:"Деньги"},
+  {label:"100 000 ◈",weight:18,type:"money",amount:100000,icon:"◈",desc:"Деньги"},
+  {label:"200 000 ◈",weight:9,type:"money",amount:200000,icon:"◈",desc:"Деньги"},
+  {label:"500 000 ◈",weight:3,type:"money",amount:500000,icon:"◈",desc:"Деньги"},
+  {label:"Случайное авто",weight:17,type:"car",icon:"🚘",desc:"Модель до 150 000 ◈"},
+  {label:"BMW M5 E60",weight:1,type:"secret",icon:"💜",desc:"Секретный автомобиль"}]},
+ tuner:{name:"NIGHT TUNER",emblem:"NT",cost:250000,note:"Тюнерский кейс: бусты дохода, редкие номера, гиперкары и крупные суммы. Бусты суммируют время.",prizes:[
+  {label:"150 000 ◈",weight:26,type:"money",amount:150000,icon:"◈",desc:"Деньги"},
+  {label:"300 000 ◈",weight:20,type:"money",amount:300000,icon:"◈",desc:"Деньги"},
+  {label:"750 000 ◈",weight:9,type:"money",amount:750000,icon:"◈",desc:"Деньги"},
+  {label:"2 000 000 ◈",weight:2,type:"money",amount:2000000,icon:"💰",desc:"Крупный выигрыш"},
+  {label:"Буст дохода ×2",weight:16,type:"boost",mult:2,minutes:15,icon:"⚡",desc:"Доход ×2 на 15 минут"},
+  {label:"Буст дохода ×3",weight:5,type:"boost",mult:3,minutes:30,icon:"🚀",desc:"Доход ×3 на 30 минут"},
+  {label:"Редкий номер",weight:10,type:"plate",minTier:2,icon:"🔢",desc:"Редкий или эксклюзивный номер для главной"},
+  {label:"Эксклюзивный номер",weight:2,type:"plate",minTier:3,icon:"👑",desc:"Номер класса «Эксклюзив»"},
+  {label:"Гиперкар",weight:9,type:"hypercar",icon:"🏎️",desc:"Случайный авто дороже 150 000 ◈"},
+  {label:"Mercedes-AMG ONE",weight:1,type:"jackpot",carId:"amgone",icon:"💎",desc:"ДЖЕКПОТ"}]}
+};
+function chooseRoulettePrize(prizes){
+ const total=prizes.reduce((sum,p)=>sum+p.weight,0);let t=Math.random()*total;
+ for(const p of prizes){t-=p.weight;if(t<0)return p}return prizes[prizes.length-1];
+}
+function makePlateOfTier(minTier,region,id){
+ const pick=()=>PLATE_LETTERS[Math.floor(Math.random()*PLATE_LETTERS.length)];
+ const pool=["001","007","100","200","300","400","500","600","700","800","900","111","222","333","444","555","666","777","888","999","123","234","345","456","567","678","789","321","432","543","654","765","876","987"];
+ for(let i=0;i<400;i++){
+  const d=pool[Math.floor(Math.random()*pool.length)],a=pick(),triple=Math.random()<0.75;
+  const l=a+d+(triple?a+a:pick()+pick());
+  if(validatePlate(l))continue;
+  if(PLATE_TIERS.indexOf(plateTier(l))<minTier||plateTaken(l,region,id))continue;
+  return {letters:l,region:String(region)};
+ }
+ return makePlate(region,id);
+}
+function addBoost(mult,minutes){
+ const now=Date.now(),b=s.boost&&s.boost.until>now?s.boost:null;
+ s.boost={mult:Math.max(mult,b?Number(b.mult)||1:1),until:Math.max(now,b?b.until:0)+minutes*60000};
+}
+function updateBoostTag(){
+ const el=byId("boostTag");if(!el)return;
+ const left=s.boost?Math.floor((s.boost.until-Date.now())/1000):0;
+ if(left>0){el.classList.remove("hidden");el.textContent="⚡ ×"+s.boost.mult+" · "+Math.floor(left/60)+":"+String(left%60).padStart(2,"0")}
+ else{el.classList.add("hidden");if(s.boost)s.boost=null}
 }
 function grantRoulettePrize(prize){
+ lastPrizeName=prize.label;
+ const own=id=>(s.owned[id]||0)>0;
  if(prize.type==="secret"){
   const c=getCar("bmwm5e60");
-  if(c&&!(s.owned[c.id]||0)){s.owned[c.id]=1;s.selected=c.id;return "💜 СЕКРЕТНЫЙ ПРИЗ! BMW M5 E60 добавлена в гараж!";}
-  addMoney(150000);return "💜 Секретный автомобиль уже есть — компенсация 150 000 ◈";
+  if(c&&!own(c.id)){s.owned[c.id]=1;s.selected=c.id;return "💜 СЕКРЕТНЫЙ ПРИЗ! BMW M5 E60 добавлена в гараж!"}
+  addMoney(150000);lastPrizeName="150 000 ◈";return "💜 Секретный автомобиль уже есть — компенсация 150 000 ◈";
  }
- if(prize.type==="money"){addMoney(prize.amount);return `🏆 Выигрыш: ${fmt(prize.amount)} ◈`;}
- if(prize.type==="car"){
-  const pool=cars.filter(c=>c.id!=="bmwm5e60"&&c.price<=ROULETTE_CAR_MAX_PRICE&&!(s.owned[c.id]||0));
-  if(pool.length){const c=pool[Math.floor(Math.random()*pool.length)];s.owned[c.id]=1;s.selected=c.id;return `🚘 Выигран автомобиль: ${c.name}!`;}
-  addMoney(100000);return "🚘 Все доступные автомобили уже в гараже — компенсация 100 000 ◈";
+ if(prize.type==="money"){addMoney(prize.amount);return `🏆 Выигрыш: ${fmt(prize.amount)} ◈`}
+ if(prize.type==="car"||prize.type==="hypercar"){
+  const hyper=prize.type==="hypercar";
+  const pool=cars.filter(c=>c.id!=="bmwm5e60"&&c.id!=="amgone"&&!own(c.id)&&(hyper?c.price>ROULETTE_CAR_MAX_PRICE:c.price<=ROULETTE_CAR_MAX_PRICE));
+  if(pool.length){const c=pool[Math.floor(Math.random()*pool.length)];s.owned[c.id]=1;s.selected=c.id;lastPrizeName=c.name;return `🚘 Выигран автомобиль: ${c.name}!`}
+  const comp=hyper?500000:100000;addMoney(comp);lastPrizeName=fmt(comp)+" ◈";return `🚘 Все подходящие автомобили уже в гараже — компенсация ${fmt(comp)} ◈`;
+ }
+ if(prize.type==="jackpot"){
+  const c=getCar(prize.carId);
+  if(c&&!own(c.id)){s.owned[c.id]=1;s.selected=c.id;return `💎 ДЖЕКПОТ! ${c.name} теперь в твоём гараже!`}
+  addMoney(1500000);lastPrizeName="1 500 000 ◈";return "💎 Джекпот уже в гараже — компенсация 1 500 000 ◈";
+ }
+ if(prize.type==="boost"){addBoost(prize.mult,prize.minutes);return `⚡ Буст дохода ×${prize.mult} на ${prize.minutes} мин!`}
+ if(prize.type==="plate"){
+  const id=s.selected,c=getCar(id),cur=ensurePlate(id),p=makePlateOfTier(prize.minTier,cur.region,id);
+  s.plates[id]=p;pe.carId=null;lastPrizeName=p.letters+" "+p.region;
+  return `🔢 Номер «${plateTier(p.letters).name}» для ${c?c.name:"машины"}: ${p.letters} ${p.region}`;
  }
  return "Попробуй ещё раз!";
 }
-const ROULETTE_BTN_TEXT="📦 Открыть кейс · "+fmt(ROULETTE_COST)+" ◈";
+function logCasePrize(cfg,msg){
+ if(!s.caseLog)s.caseLog=[];
+ s.caseLog.unshift({c:cfg.name,m:msg.replace(/^\S+\s/,"")});s.caseLog=s.caseLog.slice(0,6);
+}
+function renderCaseLog(){
+ const el=byId("caseLog");if(!el)return;
+ const log=Array.isArray(s.caseLog)?s.caseLog:[];
+ el.innerHTML=log.length?'<div class="prize-title">Последние призы</div>'+log.map(x=>`<div class="case-log-row"><span>${escapeHtml(x.c)}</span><b>${escapeHtml(x.m)}</b></div>`).join(""):"";
+}
+function setCase(key){
+ if(rouletteBusy||!CASES[key])return;currentCase=key;const cfg=CASES[key];
+ document.querySelectorAll("[data-case]").forEach(b=>b.classList.toggle("active",b.dataset.case===key));
+ const box=byId("lootCase");box.classList.toggle("tuner",key==="tuner");box.classList.remove("case-opened","case-opening");
+ box.querySelector(".case-brand").textContent=cfg.name;box.querySelector(".case-emblem").textContent=cfg.emblem;
+ byId("caseNote").textContent=cfg.note;
+ byId("spinRouletteBtn").textContent="📦 Открыть кейс · "+fmt(cfg.cost)+" ◈";
+ byId("casePrompt").textContent=cfg.name+" · "+cfg.prizes.length+" возможных наград";
+ byId("rouletteResult").textContent="Твой следующий приз может быть здесь";
+ const pb=byId("prizeBurst");if(pb)pb.classList.remove("show");
+ const total=cfg.prizes.reduce((a,p)=>a+p.weight,0);
+ byId("prizeList").innerHTML=cfg.prizes.slice().sort((a,b)=>a.weight-b.weight).map(p=>{
+  const ch=p.weight/total*100,tier=ch<=1?"jp":ch<=4?"epic":ch<=10?"rare":"common";
+  return `<div class="prize-row pr-${tier}"><span class="pr-ico">${p.icon}</span><div><b>${p.label}</b><small>${p.desc}</small></div><i>${ch<1?ch.toFixed(1):Math.round(ch)}%</i></div>`;
+ }).join("");
+ renderCaseLog();
+}
 function spinRoulette(){
  if(rouletteBusy)return;
- const cost=ROULETTE_COST;
+ const cfg=CASES[currentCase],cost=cfg.cost;
  if(s.money<cost)return toast("Для кейса нужно "+fmt(cost)+" ◈");
- const btn=document.getElementById("spinRouletteBtn");
- const box=document.getElementById("lootCase");
- const result=document.getElementById("rouletteResult");
- const prompt=document.getElementById("casePrompt");
- const prizeBurst=document.getElementById("prizeBurst");
- const prizeBurstName=document.getElementById("prizeBurstName");
+ const btn=byId("spinRouletteBtn"),box=byId("lootCase"),result=byId("rouletteResult"),prompt=byId("casePrompt"),prizeBurst=byId("prizeBurst"),prizeBurstName=byId("prizeBurstName");
  if(!btn||!box||!result)return;
  if(prizeBurst)prizeBurst.classList.remove("show");
  rouletteBusy=true;s.money-=cost;renderStats();save();
  btn.disabled=true;btn.textContent="📦 Кейс открывается…";
  result.textContent="Кейс открывается — награда уже определена…";
  if(prompt)prompt.textContent="Проверяем содержимое кейса…";
- const chosen=chooseRoulettePrize(),prize=chosen.prize;
- box.classList.remove("case-opening","case-opened");
- void box.offsetWidth;
- box.classList.add("case-opening");
+ const prize=chooseRoulettePrize(cfg.prizes);
+ box.classList.remove("case-opening","case-opened");void box.offsetWidth;box.classList.add("case-opening");
  let settled=false,timer=0;
  const onEnd=e=>{if(e.target===box)finish()};
  const finish=()=>{
   if(settled)return;settled=true;clearTimeout(timer);box.removeEventListener("animationend",onEnd);
   box.classList.remove("case-opening");box.classList.add("case-opened");
-  const prizeMessage=grantRoulettePrize(prize);
-  result.textContent=prizeMessage;
-  if(prizeBurstName){prizeBurstName.textContent=prize.type==="money"?`${fmt(prize.amount)} ◈`:prize.type==="car"?"СЛУЧАЙНЫЙ АВТОМОБИЛЬ":"BMW M5 E60";}
-  if(prizeBurst){prizeBurst.classList.remove("show");void prizeBurst.offsetWidth;prizeBurst.classList.add("show");}
+  const msg=grantRoulettePrize(prize);result.textContent=msg;logCasePrize(cfg,msg);
+  if(prizeBurstName)prizeBurstName.textContent=lastPrizeName;
+  const ico=prizeBurst&&prizeBurst.querySelector(".prize-burst-icon");if(ico)ico.textContent=prize.icon;
+  if(prizeBurst){prizeBurst.classList.remove("show");void prizeBurst.offsetWidth;prizeBurst.classList.add("show")}
   if(prompt)prompt.textContent="Кейс открыт · следующий шанс ждёт тебя";
-  btn.disabled=false;btn.textContent=ROULETTE_BTN_TEXT;rouletteBusy=false;
-  render();save();haptic("heavy");syncScore();
+  rouletteBusy=false;btn.disabled=false;btn.textContent="📦 Открыть кейс · "+fmt(cost)+" ◈";
+  render();renderCaseLog();updateBoostTag();save();haptic("heavy");syncScore();
  };
- box.addEventListener("animationend",onEnd);
- timer=setTimeout(finish,2600);
+ box.addEventListener("animationend",onEnd);timer=setTimeout(finish,2600);
 }
+document.addEventListener("click",e=>{const b=e.target.closest("[data-case]");if(b)setCase(b.dataset.case)});
+setCase("street");
 function render(){renderStats();renderShop();renderGarage();renderPlatePanel();}
 function switchTab(tab){document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));["shop","garage","roulette","ranking"].forEach(id=>document.getElementById(id+"Panel").classList.toggle("hidden",id!==tab))}
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
