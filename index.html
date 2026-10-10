@@ -362,6 +362,12 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
 .ps-item button{padding:9px 14px;font-size:11px}
 .ps-list .empty{grid-column:1/-1}
 </style>
+<style id="update-5-2-dev">
+.dev-name{color:#ffcf55!important;font-weight:900;text-shadow:0 0 10px #ffcf5566}
+.dev-badge{display:inline-block;margin:0 0 5px;padding:2px 7px;border-radius:99px;font-size:9px;font-weight:900;letter-spacing:.6px;color:#2b2008;background:linear-gradient(100deg,#ffe28a,#ffb92e);box-shadow:0 0 10px #ffcf5555}
+.rank-row .rank-player b .dev-name{color:#ffcf55!important}
+.rank-row:has(.dev-name){border-color:#b58a2e!important;background:linear-gradient(100deg,#2a210c55,transparent)!important}
+</style>
 </head>
 <body>
 <main class="app">
@@ -935,15 +941,18 @@ document.getElementById("garage").addEventListener("click",e=>{const pl=e.target
 document.getElementById("refreshLeaderboard").addEventListener("click",async()=>{const b=document.getElementById("refreshLeaderboard");b.disabled=true;b.textContent="Загрузка…";await renderLeaderboard();b.disabled=false;b.textContent="↻ Обновить";});
 function getLocalBoard(){try{const b=JSON.parse(localStorage.getItem("ct_local_leaderboard")||"[]");return Array.isArray(b)?b:[]}catch(e){return []}}
 function telegramName(){const u=tg?.initDataUnsafe?.user;if(u?.username)return "@"+u.username;const full=[u?.first_name,u?.last_name].filter(Boolean).join(" ").trim();return full||("Игрок "+playerId.slice(-4))}
+const DEV_NAMES=["@ahmat07"];
+const isDev=x=>DEV_NAMES.includes(String(x&&x.name||"").trim().toLowerCase());
 function renderBoardRows(board){
  const el=document.getElementById("leaderboard");
  if(!Array.isArray(board)||!board.length){el.innerHTML='<div class="empty">Пока нет результатов. Стань первым в рейтинге!</div>';return}
  const sorted=board.slice().sort((a,b)=>(Number(b.money)||0)-(Number(a.money)||0)).slice(0,20);
  const medal=i=>i===0?"🥇":i===1?"🥈":i===2?"🥉":String(i+1);
- const name=x=>escapeHtml(String(x.name||"Игрок"));
+ const name=x=>isDev(x)?`<span class="dev-name">${escapeHtml(String(x.name))}</span>`:escapeHtml(String(x.name||"Игрок"));
+  const devTag=x=>isDev(x)?'<div class="dev-badge">РАЗРАБОТЧИК</div>':"";
  const podium=sorted.slice(0,3);
- const podiumHtml=podium.length?'<div class="rank-podium">'+podium.map((x,i)=>`<div class="rank-podium-card ${i===0?'first':''}"><div class="rank-medal">${medal(i)}</div><div class="rank-name">${name(x)}</div><div class="rank-money">${fmt(Number(x.money)||0)} ◈</div></div>`).join("")+'</div>':'';
- const rest=sorted.slice(3).map((x,i)=>`<div class="rank-row"><div class="rank-number">${i+4}</div><div class="rank-player"><b>${name(x)}</b><small>Игрок Car Tycoon</small></div><div class="rank-score">${fmt(Number(x.money)||0)} ◈</div></div>`).join("");
+ const podiumHtml=podium.length?'<div class="rank-podium">'+podium.map((x,i)=>`<div class="rank-podium-card ${i===0?'first':''}"><div class="rank-medal">${medal(i)}</div><div class="rank-name">${name(x)}</div>${devTag(x)}<div class="rank-money">${fmt(Number(x.money)||0)} ◈</div></div>`).join("")+'</div>':'';
+ const rest=sorted.slice(3).map((x,i)=>`<div class="rank-row"><div class="rank-number">${i+4}</div><div class="rank-player"><b>${name(x)}</b><small>${isDev(x)?"Разработчик":"Игрок Car Tycoon"}</small></div><div class="rank-score">${fmt(Number(x.money)||0)} ◈</div></div>`).join("");
  el.innerHTML=podiumHtml+(rest?'<div class="rank-list">'+rest+'</div>':'');
 }
 async function renderLeaderboard(){
