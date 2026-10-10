@@ -308,7 +308,7 @@ async function syncScore(){
  let board=getLocalBoard();const i=board.findIndex(x=>x.playerId===playerId);
  if(i>=0)board[i]=current;else board.push(current);board.sort((a,b)=>(Number(b.money)||0)-(Number(a.money)||0));board=board.slice(0,20);
  try{localStorage.setItem("ct_local_leaderboard",JSON.stringify(board));localStorage.removeItem("ct_player_name")}catch(e){}
- try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money})});if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
+ try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",money:current.money})});if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
  catch(err){console.warn("Score sync failed; saved locally",err);return false}
 }
 const elapsed=Math.min(7200,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income());addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
