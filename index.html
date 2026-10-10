@@ -361,12 +361,44 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
 .ps-meta{display:flex;flex-direction:column;align-items:flex-start;gap:4px}.ps-meta small{font-size:10px;color:#8fa0ac}
 .ps-item button{padding:9px 14px;font-size:11px}
 .ps-list .empty{grid-column:1/-1}
+.ps-btns{display:flex;gap:6px}
+.ps-take{width:100%;margin:10px 0 8px}
+.plate-store{margin-top:10px;padding-top:10px}
 </style>
 <style id="update-5-2-dev">
 .dev-name{color:#ffcf55!important;font-weight:900;text-shadow:0 0 10px #ffcf5566}
 .dev-badge{display:inline-block;margin:0 0 5px;padding:2px 7px;border-radius:99px;font-size:9px;font-weight:900;letter-spacing:.6px;color:#2b2008;background:linear-gradient(100deg,#ffe28a,#ffb92e);box-shadow:0 0 10px #ffcf5555}
 .rank-row .rank-player b .dev-name{color:#ffcf55!important}
 .rank-row:has(.dev-name){border-color:#b58a2e!important;background:linear-gradient(100deg,#2a210c55,transparent)!important}
+</style>
+<style id="update-5-3-plate-roll">
+.pr-box{margin-top:12px;padding:12px;border:1px solid #26343e;border-radius:12px;background:#0c1318}
+.pr-head b{display:block;font-size:13px}.pr-head small{display:block;margin-top:3px;font-size:11px;line-height:1.45;color:#8fa0ac}
+.pr-odds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0}
+.pr-odd{padding:6px 2px;border:1px solid;border-radius:9px;text-align:center;font-size:10px;font-weight:800;line-height:1.3}
+.pr-odd i{display:block;margin-top:2px;font-style:normal;font-size:13px}
+.pr-stage{display:grid;place-items:center;min-height:96px;padding:12px;border:1px dashed #36474f;border-radius:10px;background:radial-gradient(ellipse at 50% 120%,#1f3340,#0d1419 70%);transition:border-color .3s,box-shadow .3s}
+.pr-plate{width:100%;max-width:260px}
+.pr-ph{font-size:12px;color:#667780;text-align:center}
+.pr-stage.rolling .pr-plate{animation:prShake .12s linear infinite;filter:blur(.5px)}
+.pr-stage.reveal{border-style:solid}.pr-stage.reveal .pr-plate{animation:prPop .55s cubic-bezier(.2,1.4,.4,1)}
+.pr-stage.s-basic{border-color:#4a5964}
+.pr-stage.s-nice{border-color:#2f8a77;box-shadow:0 0 18px #5fe0c022}
+.pr-stage.s-rare{border-color:#7a52b3;box-shadow:0 0 22px #b98cff33}
+.pr-stage.s-elite{border-color:#b58a2e;box-shadow:0 0 28px #ffcf5544}
+@keyframes prShake{0%{transform:translateY(-2px)}50%{transform:translateY(2px)}100%{transform:translateY(-2px)}}
+@keyframes prPop{0%{transform:scale(.82);opacity:.4}100%{transform:scale(1);opacity:1}}
+.pr-result{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px;margin-top:9px;font-size:12px;color:#a9b6bf}
+.pr-btns,.pr-after{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.pr-after{margin-top:8px}
+.pr-box button.secondary{border:1px solid #3a4c58}
+@media(max-width:480px){.pr-btns,.pr-after{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.pr-stage.rolling .pr-plate,.pr-stage.reveal .pr-plate{animation:none}}
+</style>
+<style id="update-5-3-rank-modes">
+.rank-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0 4px}
+.rank-tabs .tab{padding:10px 6px;font-size:12px}
+#leaderboard .rank-score small,#leaderboard .rank-money small{display:block;font-size:10px;font-weight:600;color:#7e9ca7;margin-top:2px}
 </style>
 </head>
 <body>
@@ -408,10 +440,16 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
   <div class="garage-summary"><span class="tag" id="garageUnique">0 моделей</span><span class="tag" id="garageOwned">0 автомобилей</span></div>
   <div class="plate-panel" id="platePanel"><div class="pe-head"><div><div class="heading" style="margin:0">🔢 Номерной знак</div><div class="muted" id="plateCarName">Номер выбранной машины</div></div><span class="pe-tier t-basic" id="plateTierTag">Обычный</span></div>
   <div class="pe-stage"><div class="pe-car" id="plateCarThumb"></div><div id="currentPlate" class="plate-wrap"></div></div>
-  <div class="pe-actions one"><button id="plateToStoreBtn" class="secondary" type="button">📥 Снять номер в хранилище</button></div>
-  <div class="plate-store"><div class="ps-head"><b>🗄 Хранилище номеров</b><span class="tag" id="plateStoreCount">0 шт.</span></div><div class="ps-list" id="plateStoreList"></div></div>
-  <div class="pe-tiers"><span class="pe-tier t-basic">Обычный</span><span class="pe-tier t-nice">Красивый</span><span class="pe-tier t-rare">Редкий</span><span class="pe-tier t-elite">Эксклюзив</span></div>
-  <div class="pe-rules">Покупка номеров отключена. Каждая машина получает обычный номер бесплатно, а красивые, редкие и эксклюзивные номера выпадают из кейса NIGHT TUNER и попадают в хранилище. Номер из хранилища ставится на выбранную машину бесплатно, а прежний необычный номер возвращается в хранилище. Один и тот же номер нельзя поставить на две машины. Класс зависит от комбинации: 777, 007, 001, зеркальные (121), подряд (123), три одинаковые буквы (ААА). Клик по номеру в карточке гаража открывает эту панель.</div></div>
+  <div class="pr-box" id="plateRoll">
+    <div class="pr-head"><b>🎲 Розыгрыш номера</b><small>Выпадает случайный номер — от обычного до эксклюзива. Редкие номера попадают в хранилище.</small></div>
+    <div class="pr-odds" id="plateRollOdds"></div>
+    <div class="pr-stage" id="plateRollStage"><div class="pr-ph">Нажми «Крутить» — и узнаешь, какой номер тебе достанется</div></div>
+    <div class="pr-result" id="plateRollResult"></div>
+    <div class="pr-after hidden" id="plateRollAfter"><button type="button" id="plateRollInstall">✅ Установить на авто</button><button type="button" class="secondary" id="plateRollKeep"></button></div>
+    <div class="pr-btns"><button type="button" class="gold" id="plateRollFree">🎁 Бесплатно</button><button type="button" id="plateRollPaid">🎲 Крутить</button></div>
+  </div>
+  <div class="pe-actions one"><button id="plateStoreToggle" class="secondary" type="button" aria-expanded="false">🗄 Хранилище номеров</button></div>
+  <div class="plate-store hidden" id="plateStoreBox"><div class="ps-list" id="plateStoreList"></div><button id="plateToStoreBtn" class="secondary ps-take" type="button">📥 Снять текущий номер в хранилище</button><div class="pe-rules">Номера нельзя купить напрямую: их можно выиграть в розыгрыше номера или в кейсе NIGHT TUNER. Лишние номера можно продать.</div></div></div>
   <div class="filters">
     <input class="field search" id="garageSearch" placeholder="Найти в гараже…">
     <select class="field" id="garageSort"><option value="name">Название: А–Я</option><option value="income">Доход: по убыванию</option><option value="level">Уровень: по убыванию</option><option value="value">Стоимость: по убыванию</option><option value="count">Количество: по убыванию</option></select>
@@ -443,8 +481,9 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
   <div id="caseLog"></div>
 </section>
 <section class="panel hidden" id="rankingPanel">
-  <div class="ranking-head"><div><div class="heading" style="margin-bottom:4px">🏆 Глобальный рейтинг</div><div class="muted">Игроки с самым большим капиталом</div></div><button class="rank-refresh" id="refreshLeaderboard">↻ Обновить</button></div>
-  <div class="mission" style="margin:10px 0 12px"><div class="row"><div><div class="muted">Твой профиль Telegram</div><b id="telegramPlayerName">Подключение…</b></div><span class="tag owned">Автосинхронизация</span></div><div class="muted" style="margin-top:7px">Капитал отправляется в рейтинг автоматически. Имя берётся из Telegram — менять его в игре нельзя.</div></div>
+  <div class="ranking-head"><div><div class="heading" style="margin-bottom:4px">🏆 Глобальный рейтинг</div><div class="muted" id="rankSubtitle">Игроки с самым большим капиталом</div></div><button class="rank-refresh" id="refreshLeaderboard">↻ Обновить</button></div>
+  <div class="rank-tabs" id="rankTabs"><button type="button" class="tab active" data-rank="money">💰 Капитал</button><button type="button" class="tab" data-rank="garage">🅿️ Стоимость гаража</button></div>
+  <div class="mission" style="margin:10px 0 12px"><div class="row"><div><div class="muted">Твой профиль Telegram</div><b id="telegramPlayerName">Подключение…</b></div><span class="tag owned">Автосинхронизация</span></div><div class="muted" style="margin-top:7px">Капитал и стоимость гаража отправляются в рейтинг автоматически. Имя берётся из Telegram — менять его в игре нельзя.</div></div>
   <div id="leaderboard"><div class="empty">Загрузка рейтинга…</div></div>
   <div class="rank-status" id="rankingStatus">Рейтинг обновляется автоматически каждые 25 секунд.</div>
 </section>
@@ -672,6 +711,8 @@ function plateHtml(p){
 }
 // ===== Хранилище номеров. Покупка номеров отключена: обычный номер выдаётся машине бесплатно,
 // а красивые/редкие/эксклюзивные падают из кейса NIGHT TUNER в хранилище. =====
+const PLATE_SELL={nice:2500,rare:20000,elite:125000}; // цена продажи номера по классу
+let plateStoreOpen=false;
 function storeList(){if(!Array.isArray(s.plateStore))s.plateStore=[];return s.plateStore}
 function plateInStore(letters,region){return Array.isArray(s.plateStore)&&s.plateStore.some(p=>p&&p.letters===letters&&String(p.region)===String(region))}
 function stashPlate(p){
@@ -695,12 +736,12 @@ function renderPlatePanel(){
   const t=plateTier(plate.letters),tag=byId("plateTierTag");tag.className="pe-tier t-"+t.id;tag.textContent=t.name;
   byId("plateCarThumb").innerHTML=`<img src="${car.img}" alt="${escapeHtml(car.name)}" data-car="1">`;
   byId("plateToStoreBtn").disabled=t.id==="basic";
-  const st=storeList();byId("plateStoreCount").textContent=st.length+" шт.";
+  const st=storeList();const tg2=byId("plateStoreToggle");tg2.textContent="🗄 Хранилище номеров · "+st.length+(plateStoreOpen?"  ▲":"  ▼");tg2.setAttribute("aria-expanded",plateStoreOpen?"true":"false");byId("plateStoreBox").classList.toggle("hidden",!plateStoreOpen);
   const items=st.map((p,i)=>({p,i,r:PLATE_TIERS.indexOf(plateTier(p.letters))})).sort((x,y)=>y.r-x.r);
   byId("plateStoreList").innerHTML=items.length?items.map(({p,i})=>{
    const tt=plateTier(p.letters);
-   return `<div class="ps-item"><div class="ps-plate">${plateHtml(p)}</div><div class="ps-meta"><span class="pe-tier t-${tt.id}">${tt.name}</span><small>${escapeHtml(REGION_NAME[String(p.region)]||"")}</small></div><button type="button" data-plate-install="${i}">Установить</button></div>`;
-  }).join(""):'<div class="empty">Хранилище пусто. Красивые, редкие и эксклюзивные номера выпадают из кейса NIGHT TUNER.</div>';
+   return `<div class="ps-item"><div class="ps-plate">${plateHtml(p)}</div><div class="ps-meta"><span class="pe-tier t-${tt.id}">${tt.name}</span><small>${escapeHtml(REGION_NAME[String(p.region)]||"")}</small></div><div class="ps-btns"><button type="button" data-plate-install="${i}">Установить</button><button type="button" class="danger" data-plate-sell="${i}">Продать · ${fmt(PLATE_SELL[tt.id]||0)} ◈</button></div></div>`;
+  }).join(""):'<div class="empty">Хранилище пусто. Красивые, редкие и эксклюзивные номера выпадают в розыгрыше номера и в кейсе NIGHT TUNER.</div>';
 }
 function installStoredPlate(i){
   const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
@@ -710,6 +751,14 @@ function installStoredPlate(i){
   s.plates[id]={letters:p.letters,region:String(p.region)};
   stashPlate(old);
   render();save();haptic();toast("Номер установлен: "+p.letters+" "+p.region+" · "+plateTier(p.letters).name);
+}
+function sellStoredPlate(i){
+  const st=storeList(),p=st[i];if(!p)return;
+  const tier=plateTier(p.letters),price=PLATE_SELL[tier.id]||0;
+  if(!price)return toast("Этот номер нельзя продать");
+  if(!confirm("Продать номер "+p.letters+" "+p.region+" ("+tier.name+") за "+fmt(price)+" ◈?"))return;
+  st.splice(i,1);addMoney(price);
+  render();save();haptic();toast("Номер продан за "+fmt(price)+" ◈");syncScore();
 }
 function plateToStore(){
   const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
@@ -768,14 +817,14 @@ function carCard(c,garage=false){
  const count=s.owned[c.id]||0,level=carLevel(c.id),isSel=s.selected===c.id,secret=c.id==="bmwm5e60";
  const rc=secret?"#d36bff":(RARITY_COLOR[c.rarity]||"#8b98a5"),cls=CLASS_NAME[c.class]||"";
  const img=`<img loading="lazy" decoding="async" data-car="1" src="${c.img}" alt="${escapeHtml(c.name)}">`;
- const head=`<div class="cc-title"><b>${c.name}</b><small>${c.brand} · ${cls}</small></div><p class="cc-desc">${c.desc}</p>`;
+ const head=`<div class="cc-title"><b>${c.name}</b><small>${c.brand} · ${cls}</small></div>`;
  if(garage){
   const cost=upgradeCost(c.id),sell=salePrice(c.id),plate=ensurePlate(c.id);
-  return `<article class="cc ${secret?"secret":""} ${isSel?"selected":""}" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${secret?"СЕКРЕТНЫЙ":c.rarity}</span>${isSel?'<span class="cc-chip cc-main">★ Главная</span>':""}<div class="cc-plate" data-plate-edit="${c.id}" role="button" tabindex="0" title="Изменить номер">${plateHtml(plate)}</div><span class="cc-lvl">Ур. ${level}</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(carIncome(c.id))} ◈/с</b></div><div><span>Продажа</span><b>${fmt(sell)} ◈</b></div></div>${specBars(c)}<div class="cc-actions"><button class="${isSel?"gold":"blue"}" data-select="${c.id}">${isSel?"★ Выбрана":"Выбрать главной"}</button><button ${s.money<cost?"disabled":""} data-upgrade="${c.id}" class="secondary">🔧 ${fmt(cost)} ◈</button><button data-sell="${c.id}" class="danger" ${ownedTotal()<=1?"disabled":""}>Продать</button></div></div></article>`;
+  return `<article class="cc ${secret?"secret":""} ${isSel?"selected":""}" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${secret?"СЕКРЕТНЫЙ":c.rarity}</span>${isSel?'<span class="cc-chip cc-main">★ Главная</span>':""}<div class="cc-plate" data-plate-edit="${c.id}" role="button" tabindex="0" title="Изменить номер">${plateHtml(plate)}</div><span class="cc-lvl">Ур. ${level}</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(carIncome(c.id))} ◈/с</b></div><div><span>Продажа</span><b>${fmt(sell)} ◈</b></div></div><div class="cc-actions"><button class="${isSel?"gold":"blue"}" data-select="${c.id}">${isSel?"★ Выбрана":"Выбрать главной"}</button><button ${s.money<cost?"disabled":""} data-upgrade="${c.id}" class="secondary">🔧 ${fmt(cost)} ◈</button><button data-sell="${c.id}" class="danger" ${ownedTotal()<=1?"disabled":""}>Продать</button></div></div></article>`;
  }
  const base=c.income*0.30;
- if(secret)return `<article class="cc secret" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">СЕКРЕТНЫЙ</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Шанс</span><b>1%</b></div></div>${specBars(c)}<div class="cc-lock">🔒 Только из кейса NIGHT TUNER</div></div></article>`;
- return `<article class="cc" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${c.rarity}</span>${count?'<span class="cc-chip cc-main">✓ В гараже</span>':""}</div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Окупаемость</span><b>~${fmtDur(c.price/base)}</b></div></div>${specBars(c)}<div class="cc-actions single"><button class="cc-buy" data-buy="${c.id}" ${count||s.money<c.price?"disabled":""}>${count?"Куплена":"Купить · "+fmt(c.price)+" ◈"}</button></div></div></article>`;
+ if(secret)return `<article class="cc secret" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">СЕКРЕТНЫЙ</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Шанс</span><b>1%</b></div></div><div class="cc-lock">🔒 Только из кейса NIGHT TUNER</div></div></article>`;
+ return `<article class="cc" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${c.rarity}</span>${count?'<span class="cc-chip cc-main">✓ В гараже</span>':""}</div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Окупаемость</span><b>~${fmtDur(c.price/base)}</b></div></div><div class="cc-actions single"><button class="cc-buy" data-buy="${c.id}" ${count||s.money<c.price?"disabled":""}>${count?"Куплена":"Купить · "+fmt(c.price)+" ◈"}</button></div></div></article>`;
 }
 document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&t.dataset&&t.dataset.car&&!t.dataset.failed){t.dataset.failed="1";t.src=NO_CAR_PHOTO}},true);
 function renderShop(){let list=cars.filter(c=>(document.getElementById("shopClass").value==="all"||c.class===document.getElementById("shopClass").value)&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("shopSearch").value.toLowerCase())));const sort=document.getElementById("shopSort").value;list.sort((a,b)=>sort==="income"?b.income-a.income:sort==="name"?a.name.localeCompare(b.name):a.price-b.price);document.getElementById("shop").innerHTML=list.length?list.map(c=>carCard(c)).join(""):'<div class="empty">Ничего не найдено.</div>'}
@@ -924,13 +973,100 @@ function spinRoulette(){
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-case]");if(b)setCase(b.dataset.case)});
 setCase("street");
-function render(){renderStats();renderShop();renderGarage();renderPlatePanel();}
+// ===== Розыгрыш номера (5.3): случайный номер от обычного до эксклюзива =====
+const PLATE_ROLL={cost:15000,freeMs:30*60000,odds:[60,28,10,2]}; // шансы по классам: обычный/красивый/редкий/эксклюзив (%)
+let plateRollBusy=false,plateRollPending=null,plateRollTimer=0;
+const PR_POOL=["001","007","100","200","300","400","500","600","700","800","900","111","222","333","444","555","666","777","888","999","123","234","345","456","567","678","789","321","432","543","654","765","876","987"];
+function plateRollPick(){return PLATE_LETTERS[Math.floor(Math.random()*PLATE_LETTERS.length)]}
+function makePlateExact(idx,region,id){
+ for(let i=0;i<800;i++){
+  const special=idx>0&&Math.random()<.8;
+  const d=special?PR_POOL[Math.floor(Math.random()*PR_POOL.length)]:String(Math.floor(Math.random()*999)+1).padStart(3,"0");
+  const a=plateRollPick(),triple=idx>0&&Math.random()<.5;
+  const l=a+d+(triple?a+a:plateRollPick()+plateRollPick());
+  if(validatePlate(l)||PLATE_TIERS.indexOf(plateTier(l))!==idx||plateTaken(l,region,id))continue;
+  return {letters:l,region:String(region)};
+ }
+ return null;
+}
+function plateRollTier(){
+ const odds=PLATE_ROLL.odds;let t=Math.random()*odds.reduce((a,b)=>a+b,0);
+ for(let i=0;i<odds.length;i++){t-=odds[i];if(t<0)return i}return 0;
+}
+function drawRollPlate(region,id){
+ for(let t=plateRollTier();t>=0;t--){const p=makePlateExact(t,region,id);if(p)return p}
+ return makePlate(region,id);
+}
+function plateRollStageHtml(p){return `<div class="pr-plate">${plateHtml(p)}</div>`}
+function initPlateRoll(){
+ const el=byId("plateRollOdds");if(!el)return;
+ el.innerHTML=PLATE_TIERS.map((t,i)=>`<div class="pr-odd t-${t.id}">${t.name}<i>${PLATE_ROLL.odds[i]}%</i></div>`).join("");
+ byId("plateRollFree").addEventListener("click",()=>startPlateRoll(false));
+ byId("plateRollPaid").addEventListener("click",()=>startPlateRoll(true));
+ byId("plateRollInstall").addEventListener("click",plateRollInstall);
+ byId("plateRollKeep").addEventListener("click",plateRollKeep);
+ updatePlateRollUi();
+}
+function updatePlateRollUi(){
+ const free=byId("plateRollFree"),paid=byId("plateRollPaid");if(!free||!paid)return;
+ const left=Math.max(0,Math.ceil(((s.plateFreeAt||0)-Date.now())/1000));
+ free.disabled=plateRollBusy||left>0;
+ free.textContent=left>0?"🎁 Бесплатно через "+Math.floor(left/60)+":"+String(left%60).padStart(2,"0"):"🎁 Бесплатно";
+ paid.disabled=plateRollBusy||s.money<PLATE_ROLL.cost;
+ paid.textContent="🎲 Крутить · "+fmt(PLATE_ROLL.cost)+" ◈";
+}
+function startPlateRoll(paid){
+ if(plateRollBusy)return;
+ const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
+ if(paid){if(s.money<PLATE_ROLL.cost)return toast("Для розыгрыша нужно "+fmt(PLATE_ROLL.cost)+" ◈");s.money-=PLATE_ROLL.cost}
+ else{if((s.plateFreeAt||0)>Date.now())return;s.plateFreeAt=Date.now()+PLATE_ROLL.freeMs}
+ plateRollBusy=true;plateRollPending=null;
+ const cur=ensurePlate(id),p=drawRollPlate(cur.region,id),tier=plateTier(p.letters);
+ if(tier.id!=="basic")stashPlate(p); // результат сразу сохраняется — не потеряется, даже если закрыть игру
+ plateRollPending={p,tier:tier.id};
+ save();renderStats();updatePlateRollUi();
+ byId("plateRollAfter").classList.add("hidden");byId("plateRollResult").innerHTML="";
+ const stage=byId("plateRollStage");stage.className="pr-stage rolling";
+ const spin=()=>{const fake=plateRollPick()+String(Math.floor(Math.random()*999)+1).padStart(3,"0")+plateRollPick()+plateRollPick();stage.innerHTML=plateRollStageHtml({letters:fake,region:cur.region})};
+ spin();clearInterval(plateRollTimer);plateRollTimer=setInterval(spin,70);
+ setTimeout(()=>{
+  clearInterval(plateRollTimer);
+  stage.className="pr-stage reveal s-"+tier.id;stage.innerHTML=plateRollStageHtml(p);
+  const stored=tier.id!=="basic";
+  byId("plateRollResult").innerHTML=`<span class="pe-tier t-${tier.id}">${tier.name}</span><span>${stored?"Добавлен в хранилище":"Обычные номера не хранятся"}</span>`;
+  byId("plateRollKeep").textContent=stored?"🗄 Открыть хранилище":"Оставить текущий";
+  byId("plateRollAfter").classList.remove("hidden");
+  plateRollBusy=false;render();save();haptic(tier.id==="basic"?"light":"heavy");syncScore();
+  toast(stored?"Выпал номер: "+p.letters+" "+p.region+" · "+tier.name:"Выпал обычный номер: "+p.letters+" "+p.region);
+ },1500);
+}
+function plateRollInstall(){
+ const r=plateRollPending;if(!r)return;
+ if(r.tier==="basic"){
+  const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
+  const old=ensurePlate(id);s.plates[id]={letters:r.p.letters,region:String(r.p.region)};stashPlate(old);
+  render();save();haptic();toast("Номер установлен: "+r.p.letters+" "+r.p.region);
+ }else{
+  const i=storeList().findIndex(q=>q.letters===r.p.letters&&String(q.region)===String(r.p.region));
+  if(i<0){byId("plateRollAfter").classList.add("hidden");plateRollPending=null;return toast("Этого номера уже нет в хранилище")}
+  installStoredPlate(i);
+ }
+ plateRollPending=null;byId("plateRollAfter").classList.add("hidden");
+}
+function plateRollKeep(){
+ const r=plateRollPending;
+ if(r&&r.tier!=="basic"){plateStoreOpen=true;renderPlatePanel();byId("plateStoreBox").scrollIntoView({behavior:"smooth",block:"nearest"})}
+ else toast("Оставлен текущий номер");
+ plateRollPending=null;byId("plateRollAfter").classList.add("hidden");
+}
+function render(){renderStats();renderShop();renderGarage();renderPlatePanel();updatePlateRollUi();}
+initPlateRoll();setInterval(updatePlateRollUi,1000);
 function switchTab(tab){document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));["shop","garage","roulette","ranking"].forEach(id=>document.getElementById(id+"Panel").classList.toggle("hidden",id!==tab))}
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
 document.getElementById("collectBtn").addEventListener("click",collect);
 document.getElementById("heroUpgradeBtn").addEventListener("click",upgradeSelected);
 document.getElementById("raceBtn").addEventListener("click",streetRace);
-byId("plateToStoreBtn").addEventListener("click",plateToStore);byId("platePanel").addEventListener("click",e=>{const b=e.target.closest("[data-plate-install]");if(b&&!b.disabled)installStoredPlate(Number(b.dataset.plateInstall))});
+byId("plateToStoreBtn").addEventListener("click",plateToStore);byId("plateStoreToggle").addEventListener("click",()=>{plateStoreOpen=!plateStoreOpen;renderPlatePanel()});byId("platePanel").addEventListener("click",e=>{const b=e.target.closest("[data-plate-install]");if(b&&!b.disabled)return installStoredPlate(Number(b.dataset.plateInstall));const s2=e.target.closest("[data-plate-sell]");if(s2)sellStoredPlate(Number(s2.dataset.plateSell))});
 document.getElementById("spinRouletteBtn").addEventListener("click",spinRoulette);
 document.getElementById("shop").addEventListener("click",e=>{const b=e.target.closest("[data-buy]");if(b&&!b.disabled)buy(b.dataset.buy)});
 const openPlateEditor=id=>{selectCar(id);byId("platePanel").scrollIntoView({behavior:"smooth",block:"center"})};
@@ -943,16 +1079,30 @@ function getLocalBoard(){try{const b=JSON.parse(localStorage.getItem("ct_local_l
 function telegramName(){const u=tg?.initDataUnsafe?.user;if(u?.username)return "@"+u.username;const full=[u?.first_name,u?.last_name].filter(Boolean).join(" ").trim();return full||("Игрок "+playerId.slice(-4))}
 const DEV_NAMES=["@ahmat07"];
 const isDev=x=>DEV_NAMES.includes(String(x&&x.name||"").trim().toLowerCase());
+let rankMode="money",lastBoard=[];
+const RANK_MODES={money:{key:"money",other:"garage",title:"Игроки с самым большим капиталом",otherLabel:"Гараж"},garage:{key:"garage",other:"money",title:"Игроки с самым дорогим гаражом",otherLabel:"Капитал"}};
+function setRankMode(mode){
+ if(!RANK_MODES[mode])return;rankMode=mode;
+ document.querySelectorAll("[data-rank]").forEach(b=>b.classList.toggle("active",b.dataset.rank===mode));
+ const sub=document.getElementById("rankSubtitle");if(sub)sub.textContent=RANK_MODES[mode].title;
+ renderBoardRows(lastBoard);
+}
+document.getElementById("rankTabs").addEventListener("click",e=>{const b=e.target.closest("[data-rank]");if(b)setRankMode(b.dataset.rank)});
 function renderBoardRows(board){
- const el=document.getElementById("leaderboard");
- if(!Array.isArray(board)||!board.length){el.innerHTML='<div class="empty">Пока нет результатов. Стань первым в рейтинге!</div>';return}
- const sorted=board.slice().sort((a,b)=>(Number(b.money)||0)-(Number(a.money)||0)).slice(0,20);
+ lastBoard=Array.isArray(board)?board:[];
+ const el=document.getElementById("leaderboard"),m=RANK_MODES[rankMode];
+ if(!lastBoard.length){el.innerHTML='<div class="empty">Пока нет результатов. Стань первым в рейтинге!</div>';return}
+ const val=(x,k)=>Math.max(0,Number(x&&x[k])||0);
+ const pool=lastBoard.filter(x=>rankMode==="money"||Number(x.garage)>0);
+ if(!pool.length){el.innerHTML='<div class="empty">Рейтинг по стоимости гаража пока пуст — данные появятся, когда игроки обновят игру.</div>';return}
+ const sorted=pool.slice().sort((a,b)=>val(b,m.key)-val(a,m.key)).slice(0,20);
  const medal=i=>i===0?"🥇":i===1?"🥈":i===2?"🥉":String(i+1);
  const name=x=>isDev(x)?`<span class="dev-name">${escapeHtml(String(x.name))}</span>`:escapeHtml(String(x.name||"Игрок"));
-  const devTag=x=>isDev(x)?'<div class="dev-badge">РАЗРАБОТЧИК</div>':"";
+ const devTag=x=>isDev(x)?'<div class="dev-badge">РАЗРАБОТЧИК</div>':"";
+ const other=x=>x[m.other]!==undefined&&x[m.other]!==null?`<small>${m.otherLabel}: ${fmt(val(x,m.other))} ◈</small>`:"";
  const podium=sorted.slice(0,3);
- const podiumHtml=podium.length?'<div class="rank-podium">'+podium.map((x,i)=>`<div class="rank-podium-card ${i===0?'first':''}"><div class="rank-medal">${medal(i)}</div><div class="rank-name">${name(x)}</div>${devTag(x)}<div class="rank-money">${fmt(Number(x.money)||0)} ◈</div></div>`).join("")+'</div>':'';
- const rest=sorted.slice(3).map((x,i)=>`<div class="rank-row"><div class="rank-number">${i+4}</div><div class="rank-player"><b>${name(x)}</b><small>${isDev(x)?"Разработчик":"Игрок Car Tycoon"}</small></div><div class="rank-score">${fmt(Number(x.money)||0)} ◈</div></div>`).join("");
+ const podiumHtml=podium.length?'<div class="rank-podium">'+podium.map((x,i)=>`<div class="rank-podium-card ${i===0?'first':''}"><div class="rank-medal">${medal(i)}</div><div class="rank-name">${name(x)}</div>${devTag(x)}<div class="rank-money">${fmt(val(x,m.key))} ◈${other(x)}</div></div>`).join("")+'</div>':'';
+ const rest=sorted.slice(3).map((x,i)=>`<div class="rank-row"><div class="rank-number">${i+4}</div><div class="rank-player"><b>${name(x)}</b><small>${isDev(x)?"Разработчик":"Игрок Car Tycoon"}</small></div><div class="rank-score">${fmt(val(x,m.key))} ◈${other(x)}</div></div>`).join("");
  el.innerHTML=podiumHtml+(rest?'<div class="rank-list">'+rest+'</div>':'');
 }
 async function renderLeaderboard(){
@@ -966,12 +1116,12 @@ async function renderLeaderboard(){
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
 async function syncScore(){
  const name=telegramName().trim().slice(0,20)||("Игрок "+playerId.slice(-4));
- const current={playerId,name,money:Math.max(0,Math.floor(Number(s.money)||0)),updated:Date.now()};
+ const current={playerId,name,money:Math.max(0,Math.floor(Number(s.money)||0)),garage:Math.max(0,Math.floor(Number(garageValue())||0)),updated:Date.now()};
  document.getElementById("telegramPlayerName").textContent=name;
  let board=getLocalBoard();const i=board.findIndex(x=>x.playerId===playerId);
  if(i>=0)board[i]=current;else board.push(current);board.sort((a,b)=>(Number(b.money)||0)-(Number(a.money)||0));board=board.slice(0,20);
  try{localStorage.setItem("ct_local_leaderboard",JSON.stringify(board));localStorage.removeItem("ct_player_name")}catch(e){}
- try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money})});if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
+ try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money,garage:current.garage})});if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
  catch(err){console.warn("Score sync failed; saved locally",err);return false}
 }
 const elapsed=Math.min(7200,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income());addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
