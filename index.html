@@ -416,6 +416,142 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
 .lvl-confetti i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;opacity:.95;animation:lvlFall linear forwards}
 @keyframes lvlFall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
 </style>
+<style id="minimal-6-0">
+/* ===== 6.0 Minimal ===== */
+:root{--bg:#0e0e10;--panel:#151517;--panel2:#1b1b1e;--text:#ececee;--muted:#85858d;--green:#a7dcc1!important;--line:#242428!important;--gold:#d8c48c!important;--ink:#ececee;--accent:#a7dcc1}
+html,body{background:#0e0e10!important;color:var(--text)}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:0;padding:clamp(12px,3vw,24px) clamp(12px,3vw,20px) 40px!important}
+.app{max-width:760px}
+.muted,.info .muted{color:var(--muted)!important}
+/* header */
+header{margin:2px 0 22px!important}
+.logo{font-size:15px!important;font-weight:700!important;letter-spacing:3px!important;text-shadow:none!important}
+.logo span{color:var(--text)!important;font-weight:300}
+.logo .muted{font-size:10px;letter-spacing:1.5px;font-weight:500;margin-top:3px;text-transform:uppercase}
+.lvl-pill{background:transparent!important;border:1px solid var(--line)!important;border-radius:99px!important;box-shadow:none!important}
+.lvl-num{background:var(--text)!important;color:#0e0e10!important;border-radius:99px!important}
+.lvl-bar u{background:var(--text)!important}
+/* balance */
+.balance{background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important;padding:4px 0 20px!important;margin-bottom:20px!important}
+.cash{font-size:44px!important;font-weight:600!important;letter-spacing:-1.5px!important;color:var(--text)!important}
+.cash span{color:var(--text)!important}
+.subline{color:var(--muted)!important;font-size:13px!important}
+.boost-tag{background:transparent!important;border:1px solid var(--line)!important;color:var(--accent)!important}
+.lvl-track-top{color:var(--muted)!important;font-weight:500}
+.lvl-bar.big{height:3px!important;background:var(--line)!important}
+.balance-grid{gap:0!important;margin-top:16px}
+.mini-stat{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0 !important}
+.mini-stat b{font-weight:600}
+/* panels */
+.panel,.mission{background:var(--panel)!important;border:1px solid var(--line)!important;border-radius:18px!important;box-shadow:none!important}
+.heading{font-size:13px!important;font-weight:600!important;letter-spacing:.2px;color:var(--text)}
+.section-note{display:none!important}
+.pill,.tag,.pe-tier{background:transparent!important;border:1px solid var(--line)!important;color:var(--muted)!important;border-radius:99px!important;font-weight:600!important;text-transform:none}
+.tag.owned{color:var(--accent)!important}
+/* hero */
+.hero{border-radius:14px!important;border:0!important}
+.hero-label{text-shadow:none}
+.stats{gap:0!important}
+.stat,.car-stats{background:transparent!important;border:0!important;border-top:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important}
+.hero-bars .sb i,.cc .sb i{background:var(--line)!important}.sb u{background:var(--text)!important}
+/* buttons */
+button{background:var(--text)!important;color:#0e0e10!important;border:1px solid transparent!important;border-radius:11px!important;box-shadow:none!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important}
+button:not(:disabled):hover{filter:none;opacity:.88}
+button:disabled{opacity:.35!important}
+button.secondary,button.blue,.race-btn,.rank-refresh,.pr-box button.secondary,.pe-actions button.blue,.cc .cc-actions button,.cc .cc-actions button.blue{background:transparent!important;color:var(--text)!important;border:1px solid #303036!important}
+button.secondary:not(:disabled):hover,.race-btn:not(:disabled):hover{background:#1d1d21!important;opacity:1}
+.cc .cc-actions button.cc-buy,.cc .cc-actions button.gold{background:var(--text)!important;color:#0e0e10!important;border-color:transparent!important}
+.cc .cc-actions button.danger{color:#e59a9a!important}
+.roulette-spin{background:var(--text)!important;color:#0e0e10!important;border:0!important}
+/* tabs → underline */
+.tabs,.rank-tabs{display:flex!important;gap:4px!important;border-bottom:1px solid var(--line);margin:22px 0 16px!important}
+.tab{background:transparent!important;color:var(--muted)!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;box-shadow:none!important;flex:1;min-height:42px;font-size:13px!important;font-weight:600!important;margin-bottom:-1px}
+.tab.active{color:var(--text)!important;border-bottom-color:var(--text)!important;background:transparent!important}
+.ui-icon{display:none!important}
+button.case-opt{background:transparent!important;border:1px solid var(--line)!important;color:var(--text)!important}
+button.case-opt.active,button.case-opt[data-case=tuner].active{background:#1b1b1e!important;border-color:var(--text)!important}
+/* fields */
+.field,input,select{background:#101012!important;border:1px solid var(--line)!important;color:var(--text)!important;border-radius:11px!important;box-shadow:none!important}
+.filters{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;margin:12px 0 18px}
+@media(max-width:560px){.filters{grid-template-columns:1fr 1fr}.filters .search{grid-column:1/-1}}
+/* car cards */
+.cc{background:var(--panel2)!important;border:1px solid var(--line)!important;box-shadow:none!important;border-radius:16px!important}
+.cc:hover{box-shadow:none!important;transform:none!important;border-color:#34343a!important}
+.cc.selected{border-color:var(--text)!important;box-shadow:none!important}
+.cc.secret{box-shadow:none!important;border-color:#4a3d5c!important}
+.cc-media:after{background:linear-gradient(transparent,#151517cc)!important;height:40%!important}
+.cc-chip{background:#0e0e10b8!important;border:0!important;color:var(--text)!important;backdrop-filter:blur(6px);font-weight:600!important}
+.cc-rar{color:var(--rc)!important}
+.cc-main{color:var(--text)!important}
+.cc-title b{font-size:17px!important;font-weight:600!important}
+.cc-title small{color:var(--muted)!important}
+.cc-kpis>div{background:transparent!important;border:0!important;border-top:1px solid var(--line)!important;border-radius:0!important;padding:8px 0 0!important}
+.cc-kpis b{color:var(--text)!important;font-weight:600}
+.cc-lock{background:transparent!important;border:1px dashed #4a3d5c!important;color:#c9b3dd!important}
+/* plates, wheel, misc surfaces */
+.plate-panel,.pr-box,.pe-stage,.pe-draft,.ps-item,.prize-row,.case-log-row,.roulette-result,.pr-stage,.case-stage{background:transparent!important;border-color:var(--line)!important;box-shadow:none!important}
+.case-stage{border:1px solid var(--line)!important}
+.empty{background:transparent!important;border:1px dashed var(--line)}
+.notice{color:#55555c!important}
+#toast{background:var(--text)!important;color:#0e0e10!important;border:0!important;border-radius:11px!important}
+#leaderboard .rank-podium-card,#leaderboard .rank-row,.rank-row{background:transparent!important;border-color:var(--line)!important;box-shadow:none!important}
+#leaderboard .rank-money,#leaderboard .rank-score,#leaderboard .rank-number{color:var(--text)!important}
+
+/* ===== Showroom carousel ===== */
+#shop{display:block!important;max-width:none!important;margin:0!important;padding:0!important;gap:0!important}
+.sc{position:relative;--w:min(80vw,400px)}
+.sc-track{display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;padding:6px calc(50% - var(--w)/2) 10px;outline:none;overscroll-behavior-x:contain}
+.sc-track::-webkit-scrollbar{display:none}
+.sc-track>.cc{flex:0 0 var(--w)!important;width:var(--w);margin:0!important;scroll-snap-align:center;scroll-snap-stop:always;opacity:.38;transform:scale(.94)!important;transition:opacity .25s,transform .25s,border-color .2s!important;cursor:pointer}
+.sc-track>.cc.active{opacity:1;transform:none!important;cursor:default}
+.sc-arrow{position:absolute;top:calc(var(--w)*.333 - 4px);z-index:5;width:44px;height:44px;padding:0!important;border-radius:50%!important;display:grid;place-items:center;font-size:26px;line-height:1;background:#0e0e10d9!important;color:var(--text)!important;border:1px solid #34343a!important;backdrop-filter:blur(8px)}
+.sc-prev{left:max(4px,calc(50% - var(--w)/2 - 22px))}
+.sc-next{right:max(4px,calc(50% - var(--w)/2 - 22px))}
+.sc-arrow:disabled{opacity:0!important;pointer-events:none}
+.sc-arrow:not(:disabled):hover{background:var(--text)!important;color:#0e0e10!important;opacity:1}
+.sc-meta{display:flex;align-items:center;gap:12px;margin:6px 4px 0;font-size:12px;color:var(--muted)}
+.sc-count{font-variant-numeric:tabular-nums;min-width:48px;color:var(--text);font-weight:600}
+.sc-bar{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.sc-bar u{display:block;height:100%;background:var(--text);transition:width .25s;text-decoration:none}
+.sc-hint{font-size:11px}
+@media(hover:none){.sc-hint{display:none}}
+@media(max-width:560px){.sc{--w:min(78vw,340px)}.sc-arrow{width:38px;height:38px;font-size:22px}.sc-prev{left:4px}.sc-next{right:4px}}
+@media(prefers-reduced-motion:reduce){.sc-track{scroll-behavior:auto}}
+.tab.active{box-shadow:none!important}
+.hero{width:100%!important;aspect-ratio:auto!important;height:clamp(200px,42vw,320px)!important;max-height:none!important}
+.notice{font-size:11px!important;line-height:1.5;margin-top:18px}
+.sc-prev{left:4px!important}.sc-next{right:4px!important}
+
+
+/* ===== Профили игроков ===== */
+#leaderboard .clickable{cursor:pointer;transition:border-color .15s,background .15s}
+#leaderboard .clickable:hover{border-color:#44444b!important;background:#1a1a1d!important}
+#leaderboard .clickable:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.pf-overlay{position:fixed;inset:0;z-index:60;background:#000000b8;backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:pfIn .18s ease}
+@media(min-width:600px){.pf-overlay{align-items:center;padding:20px}}
+.pf-card{position:relative;width:100%;max-width:480px;max-height:90vh;overflow:auto;background:#151517;border:1px solid #2a2a2f;border-radius:20px 20px 0 0;padding:22px 18px 20px;color:var(--text)}
+@media(min-width:600px){.pf-card{border-radius:20px}}
+.pf-x{position:absolute;top:10px;right:10px;width:34px;height:34px;padding:0!important;border-radius:50%!important;font-size:20px;line-height:1;background:transparent!important;color:var(--muted)!important;border:1px solid #303036!important}
+.pf-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-right:36px}
+.pf-ava{flex:0 0 46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:#0e0e10;font-weight:700;font-size:18px}
+.pf-name{font-size:17px;font-weight:600;overflow-wrap:anywhere}.pf-me{font-size:10px;font-weight:600;padding:2px 7px;border:1px solid #303036;border-radius:99px;color:var(--accent);vertical-align:middle}
+.pf-title{margin-top:2px;font-size:12px;color:var(--muted)}
+.pf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:14px}
+.pf-stats small,.pf-main-info small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}.pf-stats b{display:block;margin-top:3px;font-size:14px;font-weight:600}
+.pf-main{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:16/9;background:#0e0e10}
+.pf-main>img{width:100%;height:100%;object-fit:cover;display:block}
+.pf-main:after{content:"";position:absolute;inset:auto 0 0;height:60%;background:linear-gradient(transparent,#000000cc)}
+.pf-main-info{position:absolute;left:12px;bottom:10px;z-index:2}.pf-main-info b{display:block;font-size:16px;font-weight:600}
+.pf-main-info small{color:#cfcfd4}
+.pf-plate{position:absolute;right:10px;bottom:10px;width:96px;z-index:2}
+.pf-sub{margin:16px 0 8px;font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.pf-cars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pf-car{min-width:0}.pf-car img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:9px;display:block;background:#0e0e10}
+.pf-car b{display:block;margin-top:5px;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pf-car small{font-size:10px;color:var(--muted)}
+.pf-note{padding:18px 12px;text-align:center;font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.pf-respect{width:100%;margin-top:16px;min-height:44px}
+@keyframes pfIn{from{opacity:0}to{opacity:1}}
+</style>
 </head>
 <body>
 <main class="app">
@@ -431,20 +567,20 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
   </div>
 </section>
 <section class="panel">
-  <div class="row heading"><span>🏁 Главный автомобиль</span><span class="pill" id="rarity">STARTER</span></div>
+  <div class="row heading"><span>Главный автомобиль</span><span class="pill" id="rarity">STARTER</span></div>
   <div class="hero"><img id="heroImg" alt="Главный автомобиль" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=85"><div class="hero-label"><span id="heroName">BMW 3 Series</span><small id="heroDesc">Твой путь к автомобильной империи</small></div><div class="hero-plate" id="heroPlate"></div></div>
   <div class="stats"><div class="stat"><div class="muted">Уровень авто</div><b id="heroUpgrade">1 ур.</b></div><div class="stat"><div class="muted">Доход авто</div><b id="heroIncome">2 ◈/с</b></div><div class="stat"><div class="muted">В гараже</div><b id="heroCount">1 шт.</b></div></div>
   <div class="hero-bars" id="heroBars"></div>
-  <div class="actions"><button id="collectBtn" type="button">💰 Быстрый сбор</button><button class="secondary" id="heroUpgradeBtn" type="button">⚙️ Улучшить авто</button><button class="race-btn" id="raceBtn" type="button"><span>🏁 Уличный заезд<small id="raceHint">Проверь выбранную машину и выиграй монеты</small></span><span class="race-icon">↗</span></button></div>
+  <div class="actions"><button id="collectBtn" type="button">Быстрый сбор</button><button class="secondary" id="heroUpgradeBtn" type="button">Улучшить авто</button><button class="race-btn" id="raceBtn" type="button"><span>Уличный заезд<small id="raceHint">Проверь выбранную машину и выиграй монеты</small></span><span class="race-icon">↗</span></button></div>
 </section>
 <div class="tabs">
-  <button class="tab active" data-tab="shop"><span class="ui-icon">🚘</span>Автосалон</button>
-  <button class="tab" data-tab="garage"><span class="ui-icon">🅿️</span>Мой гараж</button>
-  <button class="tab" data-tab="roulette"><span class="ui-icon">🎡</span>Кейсы</button>
-  <button class="tab" data-tab="ranking"><span class="ui-icon">🏆</span>Топ игроков</button>
+  <button class="tab active" data-tab="shop"><span class="ui-icon"></span>Автосалон</button>
+  <button class="tab" data-tab="garage"><span class="ui-icon">🅿</span>Мой гараж</button>
+  <button class="tab" data-tab="roulette"><span class="ui-icon"></span>Кейсы</button>
+  <button class="tab" data-tab="ranking"><span class="ui-icon"></span>Топ игроков</button>
 </div>
 <section class="panel" id="shopPanel">
-  <div class="heading">🚘 Автосалон</div><p class="muted section-note">Покупай автомобили разных классов. Каждый экземпляр приносит доход, а улучшения повышают его эффективность.</p>
+  <div class="heading">Автосалон</div><p class="muted section-note">Покупай автомобили разных классов. Каждый экземпляр приносит доход, а улучшения повышают его эффективность.</p>
   <div class="filters">
     <input class="field search" id="shopSearch" placeholder="Поиск марки или модели…">
     <select class="field" id="shopClass"><option value="all">Все классы</option><option value="sedan">Начальный класс</option><option value="sport">Уличные спорткары</option><option value="hyper">Топ-класс</option></select>
@@ -453,20 +589,20 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
   <div id="shop"></div>
 </section>
 <section class="panel hidden" id="garagePanel">
-  <div class="heading">🅿️ Мой гараж</div><p class="muted section-note">Выбирай главную машину, улучшай автомобили и продавай те, которые больше не нужны.</p>
+  <div class="heading">🅿Мой гараж</div><p class="muted section-note">Выбирай главную машину, улучшай автомобили и продавай те, которые больше не нужны.</p>
   <div class="garage-summary"><span class="tag" id="garageUnique">0 моделей</span><span class="tag" id="garageOwned">0 автомобилей</span></div>
-  <div class="plate-panel" id="platePanel"><div class="pe-head"><div><div class="heading" style="margin:0">🔢 Номерной знак</div><div class="muted" id="plateCarName">Номер выбранной машины</div></div><span class="pe-tier t-basic" id="plateTierTag">Обычный</span></div>
+  <div class="plate-panel" id="platePanel"><div class="pe-head"><div><div class="heading" style="margin:0">Номерной знак</div><div class="muted" id="plateCarName">Номер выбранной машины</div></div><span class="pe-tier t-basic" id="plateTierTag">Обычный</span></div>
   <div class="pe-stage"><div class="pe-car" id="plateCarThumb"></div><div id="currentPlate" class="plate-wrap"></div></div>
   <div class="pr-box" id="plateRoll">
-    <div class="pr-head"><b>🎲 Розыгрыш номера</b><small>Выпадает случайный номер — от обычного до эксклюзива. Редкие номера попадают в хранилище.</small></div>
+    <div class="pr-head"><b>Розыгрыш номера</b><small>Выпадает случайный номер — от обычного до эксклюзива. Редкие номера попадают в хранилище.</small></div>
     <div class="pr-odds" id="plateRollOdds"></div>
     <div class="pr-stage" id="plateRollStage"><div class="pr-ph">Нажми «Крутить» — и узнаешь, какой номер тебе достанется</div></div>
     <div class="pr-result" id="plateRollResult"></div>
-    <div class="pr-after hidden" id="plateRollAfter"><button type="button" id="plateRollInstall">✅ Установить на авто</button><button type="button" class="secondary" id="plateRollKeep"></button></div>
-    <div class="pr-btns"><button type="button" class="gold" id="plateRollFree">🎁 Бесплатно</button><button type="button" id="plateRollPaid">🎲 Крутить</button></div>
+    <div class="pr-after hidden" id="plateRollAfter"><button type="button" id="plateRollInstall">Установить на авто</button><button type="button" class="secondary" id="plateRollKeep"></button></div>
+    <div class="pr-btns"><button type="button" class="gold" id="plateRollFree">Бесплатно</button><button type="button" id="plateRollPaid">Крутить</button></div>
   </div>
-  <div class="pe-actions one"><button id="plateStoreToggle" class="secondary" type="button" aria-expanded="false">🗄 Хранилище номеров</button></div>
-  <div class="plate-store hidden" id="plateStoreBox"><div class="ps-list" id="plateStoreList"></div><button id="plateToStoreBtn" class="secondary ps-take" type="button">📥 Снять текущий номер в хранилище</button><div class="pe-rules">Номера нельзя купить напрямую: их можно выиграть в розыгрыше номера или в кейсе NIGHT TUNER. Лишние номера можно продать.</div></div></div>
+  <div class="pe-actions one"><button id="plateStoreToggle" class="secondary" type="button" aria-expanded="false">Хранилище номеров</button></div>
+  <div class="plate-store hidden" id="plateStoreBox"><div class="ps-list" id="plateStoreList"></div><button id="plateToStoreBtn" class="secondary ps-take" type="button">Снять текущий номер в хранилище</button><div class="pe-rules">Номера нельзя купить напрямую: их можно выиграть в розыгрыше номера или в кейсе NIGHT TUNER. Лишние номера можно продать.</div></div></div>
   <div class="filters">
     <input class="field search" id="garageSearch" placeholder="Найти в гараже…">
     <select class="field" id="garageSort"><option value="name">Название: А–Я</option><option value="income">Доход: по убыванию</option><option value="level">Уровень: по убыванию</option><option value="value">Стоимость: по убыванию</option><option value="count">Количество: по убыванию</option></select>
@@ -475,7 +611,7 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
   <div id="garage"></div>
 </section>
 <section class="panel hidden" id="roulettePanel">
-  <div class="heading">🎡 Кейсы</div>
+  <div class="heading">Кейсы</div>
   <p class="muted section-note" id="caseNote"></p>
   <div class="case-picker" id="casePicker">
     <button type="button" class="case-opt active" data-case="street"><b>STREET GARAGE</b><small>100 000 ◈ · деньги и авто</small></button>
@@ -488,18 +624,18 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
       <div class="case-body"><span class="case-stripe"></span><span class="case-emblem">CT</span><span class="case-rivet rivet-a"></span><span class="case-rivet rivet-b"></span></div>
       <div class="case-base"></div>
     </div>
-    <div class="prize-burst" id="prizeBurst" aria-live="polite"><span class="prize-burst-icon">✦</span><span class="prize-burst-title">НАГРАДА</span><span class="prize-burst-name" id="prizeBurstName">?</span></div>
+    <div class="prize-burst" id="prizeBurst" aria-live="polite"><span class="prize-burst-icon"></span><span class="prize-burst-title">НАГРАДА</span><span class="prize-burst-name" id="prizeBurstName">?</span></div>
     <div class="case-prompt" id="casePrompt"></div>
   </div>
   <div class="roulette-result" id="rouletteResult">Твой следующий приз может быть здесь</div>
-  <button id="spinRouletteBtn" class="roulette-spin">📦 Открыть кейс</button>
+  <button id="spinRouletteBtn" class="roulette-spin">Открыть кейс</button>
   <div class="prize-title">Что может выпасть</div>
   <div class="prize-list" id="prizeList"></div>
   <div id="caseLog"></div>
 </section>
 <section class="panel hidden" id="rankingPanel">
-  <div class="ranking-head"><div><div class="heading" style="margin-bottom:4px">🏆 Глобальный рейтинг</div><div class="muted" id="rankSubtitle">Игроки с самым большим капиталом</div></div><button class="rank-refresh" id="refreshLeaderboard">↻ Обновить</button></div>
-  <div class="rank-tabs" id="rankTabs"><button type="button" class="tab active" data-rank="money">💰 Капитал</button><button type="button" class="tab" data-rank="garage">🅿️ Стоимость гаража</button></div>
+  <div class="ranking-head"><div><div class="heading" style="margin-bottom:4px">Глобальный рейтинг</div><div class="muted" id="rankSubtitle">Игроки с самым большим капиталом</div></div><button class="rank-refresh" id="refreshLeaderboard">↻ Обновить</button></div>
+  <div class="rank-tabs" id="rankTabs"><button type="button" class="tab active" data-rank="money">Капитал</button><button type="button" class="tab" data-rank="garage">🅿Стоимость гаража</button></div>
   <div class="mission" style="margin:10px 0 12px"><div class="row"><div><div class="muted">Твой профиль Telegram</div><b id="telegramPlayerName">Подключение…</b></div><span class="tag owned">Автосинхронизация</span></div><div class="muted" style="margin-top:7px">Капитал и стоимость гаража отправляются в рейтинг автоматически. Имя берётся из Telegram — менять его в игре нельзя.</div></div>
   <div id="leaderboard"><div class="empty">Загрузка рейтинга…</div></div>
   <div class="rank-status" id="rankingStatus">Рейтинг обновляется автоматически каждые 25 секунд.</div>
@@ -903,14 +1039,47 @@ function carCard(c,garage=false){
  const head=`<div class="cc-title"><b>${c.name}</b><small>${c.brand} · ${cls}</small></div>`;
  if(garage){
   const cost=upgradeCost(c.id),sell=salePrice(c.id),plate=ensurePlate(c.id);
-  return `<article class="cc ${secret?"secret":""} ${isSel?"selected":""}" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${secret?"СЕКРЕТНЫЙ":c.rarity}</span>${isSel?'<span class="cc-chip cc-main">★ Главная</span>':""}<div class="cc-plate" data-plate-edit="${c.id}" role="button" tabindex="0" title="Изменить номер">${plateHtml(plate)}</div><span class="cc-lvl">Ур. ${level}</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(carIncome(c.id))} ◈/с</b></div><div><span>Продажа</span><b>${fmt(sell)} ◈</b></div></div><div class="cc-actions"><button class="${isSel?"gold":"blue"}" data-select="${c.id}">${isSel?"★ Выбрана":"Выбрать главной"}</button><button ${s.money<cost?"disabled":""} data-upgrade="${c.id}" class="secondary">🔧 ${fmt(cost)} ◈</button><button data-sell="${c.id}" class="danger" ${ownedTotal()<=1?"disabled":""}>Продать</button></div></div></article>`;
+  return `<article class="cc ${secret?"secret":""} ${isSel?"selected":""}" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${secret?"СЕКРЕТНЫЙ":c.rarity}</span>${isSel?'<span class="cc-chip cc-main">Главная</span>':""}<div class="cc-plate" data-plate-edit="${c.id}" role="button" tabindex="0" title="Изменить номер">${plateHtml(plate)}</div><span class="cc-lvl">Ур. ${level}</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(carIncome(c.id))} ◈/с</b></div><div><span>Продажа</span><b>${fmt(sell)} ◈</b></div></div><div class="cc-actions"><button class="${isSel?"gold":"blue"}" data-select="${c.id}">${isSel?"Выбрана":"Выбрать главной"}</button><button ${s.money<cost?"disabled":""} data-upgrade="${c.id}" class="secondary">${fmt(cost)} ◈</button><button data-sell="${c.id}" class="danger" ${ownedTotal()<=1?"disabled":""}>Продать</button></div></div></article>`;
  }
  const base=c.income*0.30;
- if(secret)return `<article class="cc secret" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">СЕКРЕТНЫЙ</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Шанс</span><b>1%</b></div></div><div class="cc-lock">🔒 Только из кейса NIGHT TUNER</div></div></article>`;
+ if(secret)return `<article class="cc secret" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">СЕКРЕТНЫЙ</span></div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Шанс</span><b>1%</b></div></div><div class="cc-lock">Только из кейса NIGHT TUNER</div></div></article>`;
  return `<article class="cc" style="--rc:${rc}"><div class="cc-media">${img}<span class="cc-chip cc-rar">${c.rarity}</span>${count?'<span class="cc-chip cc-main">✓ В гараже</span>':""}</div><div class="cc-body">${head}<div class="cc-kpis"><div><span>Доход</span><b>+${fmtRate(base)} ◈/с</b></div><div><span>Окупаемость</span><b>~${fmtDur(c.price/base)}</b></div></div><div class="cc-actions single"><button class="cc-buy" data-buy="${c.id}" ${count||s.money<c.price?"disabled":""}>${count?"Куплена":"Купить · "+fmt(c.price)+" ◈"}</button></div></div></article>`;
 }
 document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&t.dataset&&t.dataset.car&&!t.dataset.failed){t.dataset.failed="1";t.src=NO_CAR_PHOTO}},true);
-function renderShop(){let list=cars.filter(c=>(document.getElementById("shopClass").value==="all"||c.class===document.getElementById("shopClass").value)&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("shopSearch").value.toLowerCase())));const sort=document.getElementById("shopSort").value;list.sort((a,b)=>sort==="income"?b.income-a.income:sort==="name"?a.name.localeCompare(b.name):a.price-b.price);document.getElementById("shop").innerHTML=list.length?list.map(c=>carCard(c)).join(""):'<div class="empty">Ничего не найдено.</div>'}
+let shopIdx=0,shopSig="";
+function renderShop(){
+ const $=id=>document.getElementById(id);
+ const cl=$("shopClass").value,q=$("shopSearch").value.toLowerCase(),sort=$("shopSort").value;
+ let list=cars.filter(c=>(cl==="all"||c.class===cl)&&(`${c.name} ${c.brand}`.toLowerCase().includes(q)));
+ list.sort((a,b)=>sort==="income"?b.income-a.income:sort==="name"?a.name.localeCompare(b.name):a.price-b.price);
+ const sig=cl+"|"+q+"|"+sort;if(sig!==shopSig){shopSig=sig;shopIdx=0}
+ const box=$("shop");
+ if(!list.length){box.innerHTML='<div class="empty">Ничего не найдено.</div>';return}
+ shopIdx=Math.min(shopIdx,list.length-1);
+ box.innerHTML='<div class="sc"><button type="button" class="sc-arrow sc-prev" data-dir="-1" aria-label="Предыдущая машина">‹</button><div class="sc-track" tabindex="0">'+list.map(c=>carCard(c)).join("")+'</div><button type="button" class="sc-arrow sc-next" data-dir="1" aria-label="Следующая машина">›</button></div><div class="sc-meta"><span class="sc-count"></span><i class="sc-bar"><u></u></i><span class="sc-hint">← → листать</span></div>';
+ shopSetup(true);
+}
+function shopSetup(instant){
+ const box=document.getElementById("shop"),track=box.querySelector(".sc-track");if(!track)return;
+ const slides=[...track.children],n=slides.length;
+ const target=i=>{const el=slides[i];return el.offsetLeft-(track.clientWidth-el.offsetWidth)/2};
+ const paint=()=>{
+  slides.forEach((el,i)=>el.classList.toggle("active",i===shopIdx));
+  box.querySelector(".sc-count").textContent=(shopIdx+1)+" / "+n;
+  box.querySelector(".sc-bar u").style.width=((shopIdx+1)/n*100)+"%";
+  box.querySelector(".sc-prev").disabled=shopIdx<=0;box.querySelector(".sc-next").disabled=shopIdx>=n-1;
+ };
+ let raf=0;
+ track.addEventListener("scroll",()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{
+  const mid=track.scrollLeft+track.clientWidth/2;let best=0,bd=1e9;
+  slides.forEach((el,i)=>{const d=Math.abs(el.offsetLeft+el.offsetWidth/2-mid);if(d<bd){bd=d;best=i}});
+  if(best!==shopIdx){shopIdx=best;paint()}
+ })},{passive:true});
+ track._go=(i,smooth=true)=>{i=Math.max(0,Math.min(n-1,i));shopIdx=i;paint();track.scrollTo({left:target(i),behavior:smooth?"smooth":"auto"})};
+ paint();
+ if(instant){track.style.scrollBehavior="auto";track.scrollLeft=target(shopIdx);track.style.scrollBehavior=""}
+}
+function shopGo(i){const t=document.querySelector("#shop .sc-track");if(t&&t._go)t._go(i)}
 function renderGarage(){let list=cars.filter(c=>(s.owned[c.id]||0)>0&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("garageSearch").value.toLowerCase())));const filter=document.getElementById("garageFilter").value;if(filter==="upgrade")list=list.filter(c=>(s.upgrades[c.id]||0)>0);const sort=document.getElementById("garageSort").value;list.sort((a,b)=>sort==="income"?carIncome(b.id)-carIncome(a.id):sort==="level"?carLevel(b.id)-carLevel(a.id):sort==="value"?basePrice(b)-basePrice(a):sort==="count"?(s.owned[b.id]||0)-(s.owned[a.id]||0):a.name.localeCompare(b.name));document.getElementById("garageUnique").textContent=list.length+" моделей";document.getElementById("garageOwned").textContent=ownedTotal()+" автомобилей";document.getElementById("garage").innerHTML=list.length?list.map(c=>carCard(c,true)).join(""):'<div class="empty">В этой категории пока нет автомобилей.</div>'}
 function renderStats(){
  const inc=income(),total=ownedTotal(),main=getCar(s.selected)||cars[0];
@@ -918,7 +1087,7 @@ function renderStats(){
  const hero=document.getElementById("heroImg");
  if(hero.dataset.carId!==main.id){hero.dataset.carId=main.id;hero.dataset.fallback=main.fallbackImg||main.img;hero.dataset.stock=main.stockImg||main.img;hero.onerror=function(){if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else if(this.dataset.stock&&this.src!==this.dataset.stock){this.src=this.dataset.stock}else{this.onerror=null;this.src=NO_CAR_PHOTO;this.alt="Фото временно недоступно"}};hero.src=main.img;}
  document.getElementById("heroName").textContent=main.name;document.getElementById("heroDesc").textContent=main.desc;document.getElementById("rarity").textContent=main.rarity;document.getElementById("heroUpgrade").textContent=carLevel(main.id)+" ур.";document.getElementById("heroIncome").textContent=fmtRate(carIncome(main.id))+" ◈/с";document.getElementById("heroCount").textContent=(s.owned[main.id]||0)+" шт.";renderHeroExtras(main);
- const cost=upgradeCost(main.id);document.getElementById("heroUpgradeBtn").disabled=s.money<cost;document.getElementById("heroUpgradeBtn").textContent="⚙️ Улучшить · "+fmt(cost)+" ◈";
+ const cost=upgradeCost(main.id);document.getElementById("heroUpgradeBtn").disabled=s.money<cost;document.getElementById("heroUpgradeBtn").textContent="Улучшить · "+fmt(cost)+" ◈";
  document.querySelectorAll("[data-buy]").forEach(b=>{const c=getCar(b.dataset.buy);if(c)b.disabled=!!s.owned[c.id]||s.money<c.price});
  document.querySelectorAll("[data-upgrade]").forEach(b=>{const c=getCar(b.dataset.upgrade);if(c)b.disabled=s.money<upgradeCost(c.id)});
 }
@@ -1152,6 +1321,10 @@ document.getElementById("raceBtn").addEventListener("click",streetRace);
 byId("plateToStoreBtn").addEventListener("click",plateToStore);byId("plateStoreToggle").addEventListener("click",()=>{plateStoreOpen=!plateStoreOpen;renderPlatePanel()});byId("platePanel").addEventListener("click",e=>{const b=e.target.closest("[data-plate-install]");if(b&&!b.disabled)return installStoredPlate(Number(b.dataset.plateInstall));const s2=e.target.closest("[data-plate-sell]");if(s2)sellStoredPlate(Number(s2.dataset.plateSell))});
 document.getElementById("spinRouletteBtn").addEventListener("click",spinRoulette);
 document.getElementById("shop").addEventListener("click",e=>{const b=e.target.closest("[data-buy]");if(b&&!b.disabled)buy(b.dataset.buy)});
+document.getElementById("shop").addEventListener("click",e=>{const a=e.target.closest(".sc-arrow");if(a&&!a.disabled){shopGo(shopIdx+Number(a.dataset.dir));return}const card=e.target.closest(".sc-track>.cc");if(card&&!card.classList.contains("active")&&!e.target.closest("button")){shopGo([...card.parentNode.children].indexOf(card))}});
+document.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;const t=e.target;if(t&&/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName))return;const p=document.getElementById("shopPanel");if(!p||p.classList.contains("hidden"))return;e.preventDefault();shopGo(shopIdx+(e.key==="ArrowRight"?1:-1))});
+window.addEventListener("resize",()=>{const t=document.querySelector("#shop .sc-track");if(t&&t._go)t._go(shopIdx,false)});
+setInterval(()=>{document.querySelectorAll("#shop [data-buy]").forEach(b=>{const c=cars.find(x=>x.id===b.dataset.buy);if(c&&!(s.owned[c.id]||0))b.disabled=s.money<c.price})},1000);
 const openPlateEditor=id=>{selectCar(id);byId("platePanel").scrollIntoView({behavior:"smooth",block:"center"})};
 document.getElementById("garage").addEventListener("keydown",e=>{const p=e.target.closest("[data-plate-edit]");if(p&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openPlateEditor(p.dataset.plateEdit)}});
 document.getElementById("garage").addEventListener("click",e=>{const pl=e.target.closest("[data-plate-edit]");if(pl){openPlateEditor(pl.dataset.plateEdit);return}const b=e.target.closest("button");if(!b)return;if(b.dataset.select)selectCar(b.dataset.select);if(b.dataset.upgrade)upgradeCar(b.dataset.upgrade);if(b.dataset.sell)sellCar(b.dataset.sell)});
@@ -1184,9 +1357,9 @@ function renderBoardRows(board){
  const devTag=x=>isDev(x)?'<div class="dev-badge">РАЗРАБОТЧИК</div>':"";
  const other=x=>x[m.other]!==undefined&&x[m.other]!==null?`<small>${m.otherLabel}: ${fmt(val(x,m.other))} ◈</small>`:"";
  const podium=sorted.slice(0,3);
- const podiumHtml=podium.length?'<div class="rank-podium">'+podium.map((x,i)=>`<div class="rank-podium-card ${i===0?'first':''}"><div class="rank-medal">${medal(i)}</div><div class="rank-name">${name(x)}</div>${devTag(x)}<div class="rank-money">${fmt(val(x,m.key))} ◈${other(x)}</div></div>`).join("")+'</div>':'';
- const rest=sorted.slice(3).map((x,i)=>`<div class="rank-row"><div class="rank-number">${i+4}</div><div class="rank-player"><b>${name(x)}</b><small>${isDev(x)?"Разработчик":"Игрок Car Tycoon"}</small></div><div class="rank-score">${fmt(val(x,m.key))} ◈${other(x)}</div></div>`).join("");
- el.innerHTML=podiumHtml+(rest?'<div class="rank-list">'+rest+'</div>':'');
+ const podiumHtml=podium.length?'<div class="rank-podium">'+podium.map((x,i)=>`<div class="rank-podium-card clickable ${i===0?'first':''}" data-pi="${i}" role="button" tabindex="0"><div class="rank-medal">${medal(i)}</div><div class="rank-name">${name(x)}</div>${devTag(x)}<div class="rank-money">${fmt(val(x,m.key))} ◈${other(x)}</div></div>`).join("")+'</div>':'';
+ const rest=sorted.slice(3).map((x,i)=>`<div class="rank-row clickable" data-pi="${i+3}" role="button" tabindex="0"><div class="rank-number">${i+4}</div><div class="rank-player"><b>${name(x)}</b><small>${isDev(x)?"Разработчик":"Игрок Car Tycoon"}</small></div><div class="rank-score">${fmt(val(x,m.key))} ◈${other(x)}</div></div>`).join("");
+ profBoard=sorted;el.innerHTML=podiumHtml+(rest?'<div class="rank-list">'+rest+'</div>':'');
 }
 async function renderLeaderboard(){
  const el=document.getElementById("leaderboard");
@@ -1196,6 +1369,63 @@ async function renderLeaderboard(){
   document.getElementById("rankingStatus").textContent="Общий рейтинг · обновлено "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
  }catch(err){renderBoardRows(getLocalBoard());document.getElementById("rankingStatus").textContent="Сервер недоступен — показываются локальные результаты, если они есть.";console.warn("Leaderboard unavailable",err)}
 }
+
+// ==================== ПРОФИЛИ ИГРОКОВ ====================
+let profBoard=[];
+const pKey=x=>x&&(x.playerId||x.id||x.tgId||x.telegramId)||"";
+const isMe=x=>!!x&&((pKey(x)&&String(pKey(x))===String(playerId))||(!pKey(x)&&x.name===(telegramName().trim().slice(0,20))));
+function myProfile(){
+ const main=s.selected,pl=s.plates&&s.plates[main];
+ return{level:playerLevel(),title:levelTitle(playerLevel()),main,plate:(pl&&plateValid(pl))?{letters:pl.letters,region:String(pl.region)}:null,
+  cars:cars.filter(c=>(s.owned[c.id]||0)>0).map(c=>({id:c.id,lv:carLevel(c.id)}))};
+}
+const respectKey=id=>"ct_respect_"+id+"_"+new Date().toISOString().slice(0,10);
+function profileHtml(x,place,prof,state){
+ const name=escapeHtml(String(x.name||"Игрок")),me=isMe(x);
+ const money=fmt(x.money),gar=fmt(x.garage);
+ let body="";
+ if(state==="loading")body='<div class="pf-note">Загрузка гаража…</div>';
+ else if(!prof)body='<div class="pf-note">Гараж этого игрока пока недоступен: он появится, когда игрок обновит игру.</div>';
+ else{
+  const list=(prof.cars||[]).map(o=>({c:cars.find(c=>c.id===o.id),lv:Number(o.lv)||1})).filter(o=>o.c);
+  const main=list.find(o=>o.c.id===prof.main)||list[0];
+  const plate=prof.plate&&prof.plate.letters?`<div class="pf-plate">${plateHtml({letters:prof.plate.letters,region:String(prof.plate.region||"77")})}</div>`:"";
+  body=(main?`<div class="pf-main"><img src="${main.c.img}" alt=""><div class="pf-main-info"><small>Главная машина</small><b>${escapeHtml(main.c.name)}</b><small>Ур. ${main.lv}</small></div>${plate}</div>`:"")+
+   `<div class="pf-sub">Гараж · ${list.length}</div><div class="pf-cars">`+list.map(o=>`<div class="pf-car"><img loading="lazy" src="${o.c.img}" alt=""><b>${escapeHtml(o.c.name)}</b><small>Ур. ${o.lv}</small></div>`).join("")+`</div>`;
+ }
+ const canRespect=!me&&pKey(x);
+ const done=canRespect&&(()=>{try{return localStorage.getItem(respectKey(pKey(x)))}catch(e){return null}})();
+ return `<div class="pf-card" role="dialog" aria-modal="true"><button type="button" class="pf-x" aria-label="Закрыть" data-pf-close>×</button>
+ <div class="pf-head"><div class="pf-ava">${name.replace(/^@/,"").slice(0,1).toUpperCase()}</div><div><div class="pf-name">${name}${me?' <span class="pf-me">это ты</span>':''}</div><div class="pf-title">${place?"#"+place+" в рейтинге":""}${prof&&prof.title?(place?" · ":"")+escapeHtml(prof.title)+" · ур. "+(prof.level||1):""}</div></div></div>
+ <div class="pf-stats"><div><small>Капитал</small><b>${money} ◈</b></div><div><small>Гараж</small><b>${gar} ◈</b></div><div><small>Респект</small><b data-pf-resp>${fmt(x.respect||0)}</b></div></div>
+ ${body}
+ ${canRespect?`<button type="button" class="pf-respect" data-pf-respect="${escapeHtml(String(pKey(x)))}" ${done?"disabled":""}>${done?"Респект отправлен":"Дать респект"}</button>`:""}</div>`;
+}
+async function openProfile(x,place){
+ document.getElementById("profModal")?.remove();
+ const ov=document.createElement("div");ov.id="profModal";ov.className="pf-overlay";document.body.appendChild(ov);
+ const close=()=>{ov.remove();document.removeEventListener("keydown",onKey)};
+ const onKey=e=>{if(e.key==="Escape")close()};document.addEventListener("keydown",onKey);
+ ov.addEventListener("click",async e=>{
+  if(e.target===ov||e.target.closest("[data-pf-close]"))return close();
+  const r=e.target.closest("[data-pf-respect]");if(!r||r.disabled)return;
+  r.disabled=true;
+  try{const res=await fetch(API_BASE+"/respect",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",targetId:r.dataset.pfRespect})});if(!res.ok)throw Error("HTTP "+res.status);
+   try{localStorage.setItem(respectKey(r.dataset.pfRespect),"1")}catch(_){}
+   r.textContent="Респект отправлен";const c=ov.querySelector("[data-pf-resp]");if(c)c.textContent=fmt((Number(x.respect)||0)+1);x.respect=(Number(x.respect)||0)+1;toast("Респект отправлен");haptic()}
+  catch(err){r.disabled=false;toast("Не удалось отправить респект")}
+ });
+ let prof=isMe(x)?myProfile():(x.profile||null);
+ if(!prof&&pKey(x)){
+  ov.innerHTML=profileHtml(x,place,null,"loading");
+  try{const r=await fetch(API_BASE+"/profile?playerId="+encodeURIComponent(pKey(x)),{cache:"no-store"});if(r.ok){const j=await r.json();prof=j.profile||j;if(j.respect!==undefined)x.respect=j.respect}}catch(e){}
+ }
+ if(document.getElementById("profModal")===ov)ov.innerHTML=profileHtml(x,place,prof,"");
+}
+(function(){const el=document.getElementById("leaderboard");
+ const open=t=>{const row=t.closest("[data-pi]");if(!row)return;const i=Number(row.dataset.pi),x=profBoard[i];if(x)openProfile(x,i+1)};
+ el.addEventListener("click",e=>open(e.target));
+ el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open(e.target)}});})();
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
 async function syncScore(){
  const name=telegramName().trim().slice(0,20)||("Игрок "+playerId.slice(-4));
@@ -1204,7 +1434,7 @@ async function syncScore(){
  let board=getLocalBoard();const i=board.findIndex(x=>x.playerId===playerId);
  if(i>=0)board[i]=current;else board.push(current);board.sort((a,b)=>(Number(b.money)||0)-(Number(a.money)||0));board=board.slice(0,20);
  try{localStorage.setItem("ct_local_leaderboard",JSON.stringify(board));localStorage.removeItem("ct_player_name")}catch(e){}
- try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money,garage:current.garage})});if(r.status===403){let j={};try{j=await r.json()}catch(e){}if(j&&j.banned){window.__banned=true;toast("🚫 Аккаунт заблокирован в рейтинге");return false}}if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
+ try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money,garage:current.garage,playerId,profile:myProfile()})});if(r.status===403){let j={};try{j=await r.json()}catch(e){}if(j&&j.banned){window.__banned=true;toast("🚫 Аккаунт заблокирован в рейтинге");return false}}if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
  catch(err){console.warn("Score sync failed; saved locally",err);return false}
 }
 const elapsed=Math.min(7200,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income());addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
