@@ -400,13 +400,30 @@ button.case-opt[data-case=tuner].active{background:#2a2040!important;border-colo
 .rank-tabs .tab{padding:10px 6px;font-size:12px}
 #leaderboard .rank-score small,#leaderboard .rank-money small{display:block;font-size:10px;font-weight:600;color:#7e9ca7;margin-top:2px}
 </style>
+<style>
+/* ===== Level system 5.3 ===== */
+.lvl-pill{display:flex;align-items:center;gap:8px;min-width:150px;max-width:210px;padding:5px 9px 5px 5px;border-radius:12px;background:#10202a;border:1px solid #3b5c5d;color:#d9efec;font-size:11px;white-space:nowrap}
+.lvl-num{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#78b7b0,#b9ff3b);color:#0c1a14;font-weight:900;font-size:13px;flex-shrink:0}
+.lvl-mid{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.lvl-mid b{font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.lvl-xp{font-size:9px;color:#8fb3b0;font-weight:700}
+.lvl-bar{display:block;height:4px;border-radius:99px;background:#ffffff1a;overflow:hidden}
+.lvl-bar u{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#78b7b0,#b9ff3b);text-decoration:none;transition:width .4s}
+.lvl-bar.big{height:7px;margin-top:6px}
+.lvl-track{position:relative;z-index:1;margin:10px 0 12px}
+.lvl-track-top{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:700;color:#b8d4d1}
+.lvl-confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:15}
+.lvl-confetti i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;opacity:.95;animation:lvlFall linear forwards}
+@keyframes lvlFall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+</style>
 </head>
 <body>
 <main class="app">
-<header><div class="logo">CAR <span>TYCOON</span><div class="muted">STREET GARAGE · UPDATE 5.2</div></div><div class="pill" id="level">LEVEL 1</div></header>
+<header><div class="logo">CAR <span>TYCOON</span><div class="muted">STREET GARAGE · UPDATE 5.3</div></div><div class="lvl-pill" id="level">LEVEL 1</div></header>
 <section class="balance">
   <div class="muted">КАПИТАЛ КОМПАНИИ</div><div class="cash">◈ <span id="money">500</span></div>
   <div class="subline">↗ <span id="income">2</span> монет в секунду<span class="boost-tag hidden" id="boostTag"></span></div>
+  <div class="lvl-track" id="lvlTrack"><div class="lvl-track-top"><span id="lvlTrackLabel"></span><span id="lvlTrackXp"></span></div><i class="lvl-bar big"><u id="lvlTrackFill" style="width:0%"></u></i></div>
   <div class="balance-grid">
     <div class="mini-stat"><div class="muted">Автомобилей</div><b id="totalCars">1</b></div>
     <div class="mini-stat"><div class="muted">Стоимость гаража</div><b id="garageValue">250 ◈</b></div>
@@ -628,7 +645,7 @@ const getCar=id=>cars.find(c=>c.id===id);
 const carLevel=id=>(s.upgrades[id]||0)+1;
 const carIncome=id=>{const c=getCar(id);return c?(c.income*0.30*(1+0.15*(s.upgrades[id]||0))):0};
 const boostMult=()=>(s.boost&&s.boost.until>Date.now())?(Number(s.boost.mult)||1):1;
-const income=()=>cars.reduce((sum,c)=>sum+(s.owned[c.id]||0)*carIncome(c.id),0)*boostMult();
+const income=()=>cars.reduce((sum,c)=>sum+(s.owned[c.id]||0)*carIncome(c.id),0)*boostMult()*levelMult();
 const ownedTotal=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0),0);
 const basePrice=c=>c.id==="bmwm5e60"?98000:c.price;
 const garageValue=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0)*basePrice(c)*(1+0.12*(s.upgrades[c.id]||0)),0);
@@ -638,7 +655,73 @@ function saveState(state=s){state.lastTime=Date.now();try{localStorage.setItem(S
 function save(){saveState(s)}
 function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),1900)}
 function haptic(type="medium"){try{tg?.HapticFeedback?.impactOccurred(type)}catch(e){}}
-function addMoney(n){n=Math.max(0,Math.floor(n));s.money+=n;s.totalEarned=(Number(s.totalEarned)||0)+n}
+// ==================== СИСТЕМА УРОВНЕЙ 5.3 ====================
+const LEVEL_MAX=99;
+function levelCurve(lv){return Math.floor(150*Math.pow(lv,1.45))}
+let _lvCache={xp:-1,val:null};
+function levelProgress(){
+  const xp=Math.floor(Number(s.totalEarned)||0);
+  if(_lvCache.xp===xp&&_lvCache.val)return _lvCache.val;
+  let lv=1,acc=0,need=levelCurve(1);
+  while(lv<LEVEL_MAX&&xp>=acc+need){acc+=need;lv++;need=levelCurve(lv)}
+  const maxed=lv>=LEVEL_MAX;
+  const val=maxed?{lv:LEVEL_MAX,cur:need,need:Math.max(1,need),maxed:true}:{lv,cur:xp-acc,need,maxed:false};
+  _lvCache={xp,val};return val;
+}
+function playerLevel(){return levelProgress().lv}
+function levelTitle(lv){
+  const t=[[1,"Новичок"],[3,"Гонщик двора"],[5,"Уличный гонщик"],[8,"Тюнер"],[11,"Коллекционер"],[15,"Автобосс"],[19,"Магнат"],[24,"Легенда улиц"],[30,"Король гаражей"],[38,"Авто-император"],[50,"Живая легенда"]];
+  let name=t[0][1];for(const [min,n] of t){if(lv>=min)name=n}return name;
+}
+function levelMult(){return 1+0.02*(playerLevel()-1)}
+function levelBonus(lv){return 100*lv*(lv%5===0?3:1)}
+let _lastLv=playerLevel();
+function resetLevelTracking(){_lvCache={xp:-1,val:null};_lastLv=playerLevel()}
+function checkLevelUp(){
+  const lv=playerLevel();
+  if(lv<=_lastLv){_lastLv=lv;return}
+  let bonus=0;for(let l=_lastLv+1;l<=lv;l++)bonus+=levelBonus(l);
+  _lastLv=lv;s.money+=bonus;
+  onLevelUp(lv,bonus);
+}
+function onLevelUp(newLv,bonus){
+  haptic("heavy");
+  const p=levelProgress();
+  toast("🏆 Уровень "+newLv+" — «"+levelTitle(newLv)+"»! Награда: +"+fmt(bonus)+" ◈");
+  if(!p.maxed)setTimeout(()=>toast("До уровня "+(newLv+1)+" ещё "+fmt(Math.max(0,p.need-p.cur))+" XP"),2200);
+  confettiBurst();renderLevelBadge();renderLevelTrack();
+}
+function confettiBurst(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const host=document.createElement("div");host.className="lvl-confetti";
+  const colors=["#78b7b0","#b9ff3b","#ffcf55","#ff8a5c","#a98bff","#5aa9ff"];
+  for(let i=0;i<36;i++){
+    const p=document.createElement("i");
+    p.style.left=Math.random()*100+"%";
+    p.style.background=colors[i%colors.length];
+    p.style.animationDelay=(Math.random()*.6)+"s";
+    p.style.animationDuration=(1.6+Math.random()*1.4)+"s";
+    if(i%3===0)p.style.borderRadius="50%";
+    host.appendChild(p);
+  }
+  document.body.appendChild(host);setTimeout(()=>host.remove(),3400);
+}
+function renderLevelBadge(){
+  const pill=document.getElementById("level");if(!pill)return;
+  const p=levelProgress(),pct=p.maxed?100:Math.max(0,Math.min(100,Math.round(p.cur/p.need*100)));
+  pill.classList.add("lvl-pill");pill.classList.remove("pill");
+  pill.innerHTML='<span class="lvl-num">'+p.lv+'</span><span class="lvl-mid"><b>'+levelTitle(p.lv)+'</b><i class="lvl-bar"><u style="width:'+pct+'%"></u></i></span><span class="lvl-xp">'+(p.maxed?"MAX":fmt(p.cur)+"/"+fmt(p.need))+'</span>';
+}
+function renderLevelTrack(){
+  const p=levelProgress();
+  const l=document.getElementById("lvlTrackLabel"),x=document.getElementById("lvlTrackXp"),f=document.getElementById("lvlTrackFill");
+  if(!l)return;
+  l.textContent="Уровень "+p.lv+" · "+levelTitle(p.lv)+" · доход +"+Math.round((levelMult()-1)*100)+"%";
+  x.textContent=p.maxed?"MAX":(fmt(p.cur)+" / "+fmt(p.need)+" XP");
+  f.style.width=(p.maxed?100:Math.max(0,Math.min(100,p.cur/p.need*100)))+"%";
+}
+// addMoney: все начисления идут в XP; пачка уровней = один тост и одна награда
+function addMoney(n){n=Math.max(0,Math.floor(n));s.money+=n;s.totalEarned=(Number(s.totalEarned)||0)+n;checkLevelUp()}
 function collect(){const n=Math.max(1,Math.floor(income()*3));addMoney(n);render();save();haptic();toast("+"+fmt(n)+" ◈ получено");syncScore()}
 const REGION_DATA=[
 ["Адыгея",["01"]],["Башкортостан",["02","102","702"]],["Бурятия",["03","103"]],["Алтай",["04"]],["Дагестан",["05"]],["Ингушетия",["06"]],["Кабардино-Балкария",["07"]],["Калмыкия",["08"]],["Карачаево-Черкесия",["09"]],["Карелия",["10"]],["Коми",["11"]],["Марий Эл",["12"]],["Мордовия",["13","113"]],["Саха (Якутия)",["14"]],["Северная Осетия",["15"]],["Татарстан",["16","116","716"]],["Тыва",["17"]],["Удмуртия",["18","118"]],["Хакасия",["19"]],["Чечня",["20","95"]],["Чувашия",["21","121"]],["Алтайский край",["22","122"]],["Краснодарский край",["23","93","123"]],["Красноярский край",["24","84","88","124"]],["Приморский край",["25","125"]],["Ставропольский край",["26","126"]],["Хабаровский край",["27"]],["Амурская область",["28"]],["Архангельская область",["29"]],["Астраханская область",["30"]],["Белгородская область",["31"]],["Брянская область",["32"]],["Владимирская область",["33"]],["Волгоградская область",["34","134"]],["Вологодская область",["35"]],["Воронежская область",["36","136"]],["Ивановская область",["37"]],["Иркутская область",["38","85","138"]],["Калининградская область",["39","91"]],["Калужская область",["40"]],["Камчатский край",["41"]],["Кемеровская область",["42","142"]],["Кировская область",["43"]],["Костромская область",["44"]],["Курганская область",["45"]],["Курская область",["46"]],["Ленинградская область",["47"]],["Липецкая область",["48"]],["Магаданская область",["49"]],["Московская область",["50","90","150","190","750","790"]],["Мурманская область",["51"]],["Нижегородская область",["52","152"]],["Новгородская область",["53"]],["Новосибирская область",["54","154"]],["Омская область",["55"]],["Оренбургская область",["56"]],["Орловская область",["57"]],["Пензенская область",["58"]],["Пермский край",["59","81","159"]],["Псковская область",["60"]],["Ростовская область",["61","161","761"]],["Рязанская область",["62"]],["Самарская область",["63","163","763"]],["Саратовская область",["64","164"]],["Сахалинская область",["65"]],["Свердловская область",["66","96","196"]],["Смоленская область",["67"]],["Тамбовская область",["68"]],["Тверская область",["69"]],["Томская область",["70"]],["Тульская область",["71"]],["Тюменская область",["72"]],["Ульяновская область",["73","173"]],["Челябинская область",["74","174","774"]],["Забайкальский край",["75","80"]],["Ярославская область",["76"]],["Москва",["77","97","99","177","197","199","777","799"]],["Санкт-Петербург",["78","98","178","198"]],["Еврейская АО",["79"]],["Крым",["82"]],["Ненецкий АО",["83"]],["ХМАО",["86","186"]],["Чукотка",["87"]],["ЯНАО",["89"]],["Севастополь",["92"]],["Байконур",["94"]]
@@ -831,7 +914,7 @@ function renderShop(){let list=cars.filter(c=>(document.getElementById("shopClas
 function renderGarage(){let list=cars.filter(c=>(s.owned[c.id]||0)>0&&(`${c.name} ${c.brand}`.toLowerCase().includes(document.getElementById("garageSearch").value.toLowerCase())));const filter=document.getElementById("garageFilter").value;if(filter==="upgrade")list=list.filter(c=>(s.upgrades[c.id]||0)>0);const sort=document.getElementById("garageSort").value;list.sort((a,b)=>sort==="income"?carIncome(b.id)-carIncome(a.id):sort==="level"?carLevel(b.id)-carLevel(a.id):sort==="value"?basePrice(b)-basePrice(a):sort==="count"?(s.owned[b.id]||0)-(s.owned[a.id]||0):a.name.localeCompare(b.name));document.getElementById("garageUnique").textContent=list.length+" моделей";document.getElementById("garageOwned").textContent=ownedTotal()+" автомобилей";document.getElementById("garage").innerHTML=list.length?list.map(c=>carCard(c,true)).join(""):'<div class="empty">В этой категории пока нет автомобилей.</div>'}
 function renderStats(){
  const inc=income(),total=ownedTotal(),main=getCar(s.selected)||cars[0];
- document.getElementById("money").textContent=fmt(s.money);document.getElementById("income").textContent=fmtRate(inc);updateBoostTag();document.getElementById("totalCars").textContent=total;document.getElementById("garageValue").textContent=fmt(garageValue())+" ◈";document.getElementById("earned").textContent=fmt(s.totalEarned)+" ◈";document.getElementById("level").textContent="LEVEL "+(1+Math.floor(Math.log2(Math.max(1,total))));
+ document.getElementById("money").textContent=fmt(s.money);document.getElementById("income").textContent=fmtRate(inc);updateBoostTag();document.getElementById("totalCars").textContent=total;document.getElementById("garageValue").textContent=fmt(garageValue())+" ◈";document.getElementById("earned").textContent=fmt(s.totalEarned)+" ◈";renderLevelBadge();renderLevelTrack();
  const hero=document.getElementById("heroImg");
  if(hero.dataset.carId!==main.id){hero.dataset.carId=main.id;hero.dataset.fallback=main.fallbackImg||main.img;hero.dataset.stock=main.stockImg||main.img;hero.onerror=function(){if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else if(this.dataset.stock&&this.src!==this.dataset.stock){this.src=this.dataset.stock}else{this.onerror=null;this.src=NO_CAR_PHOTO;this.alt="Фото временно недоступно"}};hero.src=main.img;}
  document.getElementById("heroName").textContent=main.name;document.getElementById("heroDesc").textContent=main.desc;document.getElementById("rarity").textContent=main.rarity;document.getElementById("heroUpgrade").textContent=carLevel(main.id)+" ур.";document.getElementById("heroIncome").textContent=fmtRate(carIncome(main.id))+" ◈/с";document.getElementById("heroCount").textContent=(s.owned[main.id]||0)+" шт.";renderHeroExtras(main);
@@ -1078,7 +1161,7 @@ document.getElementById("refreshLeaderboard").addEventListener("click",async()=>
 function getLocalBoard(){try{const b=JSON.parse(localStorage.getItem("ct_local_leaderboard")||"[]");return Array.isArray(b)?b:[]}catch(e){return []}}
 function telegramName(){const u=tg?.initDataUnsafe?.user;if(u?.username)return "@"+u.username;const full=[u?.first_name,u?.last_name].filter(Boolean).join(" ").trim();return full||("Игрок "+playerId.slice(-4))}
 const DEV_NAMES=["@ahmat07"];
-const isDev=x=>DEV_NAMES.includes(String(x&&x.name||"").trim().toLowerCase());
+const isDev=x=>!!(x&&x.dev===true);
 let rankMode="money",lastBoard=[];
 const RANK_MODES={money:{key:"money",other:"garage",title:"Игроки с самым большим капиталом",otherLabel:"Гараж"},garage:{key:"garage",other:"money",title:"Игроки с самым дорогим гаражом",otherLabel:"Капитал"}};
 function setRankMode(mode){
@@ -1121,7 +1204,7 @@ async function syncScore(){
  let board=getLocalBoard();const i=board.findIndex(x=>x.playerId===playerId);
  if(i>=0)board[i]=current;else board.push(current);board.sort((a,b)=>(Number(b.money)||0)-(Number(a.money)||0));board=board.slice(0,20);
  try{localStorage.setItem("ct_local_leaderboard",JSON.stringify(board));localStorage.removeItem("ct_player_name")}catch(e){}
- try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money,garage:current.garage})});if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
+ try{const r=await fetch(API_BASE+"/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",name,money:current.money,garage:current.garage})});if(r.status===403){let j={};try{j=await r.json()}catch(e){}if(j&&j.banned){window.__banned=true;toast("🚫 Аккаунт заблокирован в рейтинге");return false}}if(!r.ok)throw Error("score request failed");if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard();return true}
  catch(err){console.warn("Score sync failed; saved locally",err);return false}
 }
 const elapsed=Math.min(7200,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income());addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
@@ -1130,6 +1213,70 @@ setInterval(()=>{incomeCarry+=income();const whole=Math.floor(incomeCarry);if(wh
 setInterval(save,5000);
 setInterval(()=>{syncScore();if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard()},25000);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});window.addEventListener("pagehide",save);
+
+// ==================== DEV-ПАНЕЛЬ (только для разработчика) ====================
+// ВАЖНО: проверка на клиенте — лишь скрытие интерфейса. Реальные права (бан) проверяет сервер по подписи initData.
+const DEV_IDS=[1819975432];
+const isDevAccount=()=>DEV_IDS.includes(Number(tg?.initDataUnsafe?.user?.id));
+async function adminCall(path,body){
+  const r=await fetch(API_BASE+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?.initData||"",...body})});
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok)throw Error(j.error||("HTTP "+r.status));return j;
+}
+function devXpForLevel(lv){let xp=0;for(let l=1;l<lv;l++)xp+=levelCurve(l);return xp}
+
+async function openPlayersList(){
+  let j;try{j=await adminCall("/admin/players",{})}catch(e){return toast("Ошибка: "+e.message)}
+  document.getElementById("devPlayers")?.remove();
+  const box=document.createElement("div");box.id="devPlayers";
+  box.style.cssText="position:fixed;inset:0;z-index:55;background:#050a10ee;overflow:auto;padding:14px";
+  const wrap=document.createElement("div");wrap.style.cssText="max-width:480px;margin:0 auto;display:grid;gap:7px";
+  const title=document.createElement("div");title.textContent="👥 Игроки (топ-50 по капиталу)";title.style.cssText="font-weight:850;color:#b8d4d1";wrap.appendChild(title);
+  (j.players||[]).forEach(pl=>{
+    const row=document.createElement("div");row.style.cssText="display:flex;gap:8px;align-items:center;justify-content:space-between;background:#10202a;border:1px solid #2b4650;border-radius:10px;padding:8px 10px";
+    const info=document.createElement("div");info.style.cssText="min-width:0;font-size:12px";
+    const nm=document.createElement("b");nm.textContent=pl.name+(pl.banned?" · 🚫":"");
+    const sm=document.createElement("div");sm.textContent="ID "+pl.id+" · "+fmt(pl.money)+" ◈";sm.style.cssText="color:#8fb3b0;font-size:10px";
+    info.append(nm,sm);
+    const btn=document.createElement("button");btn.textContent=pl.banned?"Разбанить":"Бан";btn.className=pl.banned?"secondary":"danger";btn.style.cssText="padding:7px 10px;font-size:11px;flex-shrink:0";
+    btn.onclick=async()=>{
+      try{
+        if(pl.banned){await adminCall("/admin/unban",{targetId:pl.id});pl.banned=false}
+        else{if(!confirm("Забанить "+pl.name+" ("+pl.id+")?"))return;await adminCall("/admin/ban",{targetId:pl.id,reason:"dev panel"});pl.banned=true}
+        nm.textContent=pl.name+(pl.banned?" · 🚫":"");btn.textContent=pl.banned?"Разбанить":"Бан";btn.className=pl.banned?"secondary":"danger";
+      }catch(e){toast("Ошибка: "+e.message)}
+    };
+    row.append(info,btn);wrap.appendChild(row);
+  });
+  const close=document.createElement("button");close.textContent="Закрыть";close.onclick=()=>box.remove();wrap.appendChild(close);
+  box.appendChild(wrap);document.body.appendChild(box);
+}
+const DEV_ACTIONS=[
+  ["💰 +1 000 000 ◈",()=>{s.money+=1e6}],
+  ["💰 +100 000 000 ◈",()=>{s.money+=1e8}],
+  ["⭐ Установить уровень",()=>{const v=Math.floor(Number(prompt("Уровень 1–"+LEVEL_MAX,String(playerLevel()))));if(!(v>=1&&v<=LEVEL_MAX))return;s.totalEarned=devXpForLevel(v);resetLevelTracking();toast("Уровень: "+v)}],
+  ["🚘 Выдать все машины",()=>{cars.forEach(c=>{s.owned[c.id]=1});toast("Все машины выданы")}],
+  ["👥 Игроки и баны",()=>openPlayersList()],
+  ["🚫 Забанить по Telegram ID",async()=>{const id=Math.floor(Number(prompt("Telegram ID игрока")));if(!id)return;const reason=prompt("Причина (необязательно)","")||"";try{await adminCall("/admin/ban",{targetId:id,reason});toast("🚫 Забанен: "+id)}catch(e){toast("Ошибка бана: "+e.message)}}],
+  ["✅ Разбанить по Telegram ID",async()=>{const id=Math.floor(Number(prompt("Telegram ID игрока")));if(!id)return;try{await adminCall("/admin/unban",{targetId:id});toast("✅ Разбанен: "+id)}catch(e){toast("Ошибка: "+e.message)}}],
+  ["🗑 Сбросить моё сохранение",()=>{if(confirm("Удалить сохранение этого устройства?")){try{localStorage.removeItem(SAVE_KEY)}catch(e){}location.reload()}}]
+];
+function openDevPanel(){
+  if(!isDevAccount())return;
+  let box=document.getElementById("devPanel");if(box){box.remove();return}
+  box=document.createElement("div");box.id="devPanel";
+  box.style.cssText="position:fixed;inset:auto 12px 12px 12px;max-width:420px;margin:0 auto;z-index:50;background:#0d1621f2;border:1px solid #3b5c5d;border-radius:14px;padding:12px;display:grid;gap:7px;box-shadow:0 10px 40px #000a";
+  const h=document.createElement("div");h.textContent="🛠 Режим разработчика · ID "+DEV_IDS[0];h.style.cssText="font-weight:850;font-size:12px;color:#b8d4d1";box.appendChild(h);
+  DEV_ACTIONS.forEach(([label,fn])=>{const b=document.createElement("button");b.className="secondary";b.textContent=label;b.onclick=async()=>{await fn();render();save()};box.appendChild(b)});
+  const x=document.createElement("button");x.textContent="Закрыть";x.onclick=()=>box.remove();box.appendChild(x);
+  document.body.appendChild(box);
+}
+(function initDevTrigger(){
+  const logo=document.querySelector(".logo");if(!logo||!isDevAccount())return;
+  let timer=null;const start=()=>{clearTimeout(timer);timer=setTimeout(openDevPanel,800)},stop=()=>clearTimeout(timer);
+  ["touchstart","mousedown"].forEach(e=>logo.addEventListener(e,start,{passive:true}));
+  ["touchend","touchmove","touchcancel","mouseup","mouseleave"].forEach(e=>logo.addEventListener(e,stop,{passive:true}));
+})();
 })();
 </script>
 </body>
