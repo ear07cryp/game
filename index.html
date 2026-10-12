@@ -734,16 +734,8 @@ button.tn-btn{padding:9px 12px!important;font-size:12px;min-width:92px}
   <div class="slotbar" id="slotBar"></div>
   <div class="plate-panel" id="platePanel"><div class="pe-head"><div><div class="heading" style="margin:0">Номерной знак</div><div class="muted" id="plateCarName">Номер выбранной машины</div></div><span class="pe-tier t-basic" id="plateTierTag">Обычный</span></div>
   <div class="pe-stage"><div class="pe-car" id="plateCarThumb"></div><div id="currentPlate" class="plate-wrap"></div></div>
-  <div class="pr-box" id="plateRoll">
-    <div class="pr-head"><b>Розыгрыш номера</b><small>Выпадает случайный номер — от обычного до эксклюзива. Редкие номера попадают в хранилище.</small></div>
-    <div class="pr-odds" id="plateRollOdds"></div>
-    <div class="pr-stage" id="plateRollStage"><div class="pr-ph">Нажми «Крутить» — и узнаешь, какой номер тебе достанется</div></div>
-    <div class="pr-result" id="plateRollResult"></div>
-    <div class="pr-after hidden" id="plateRollAfter"><button type="button" id="plateRollInstall">Установить на авто</button><button type="button" class="secondary" id="plateRollKeep"></button></div>
-    <div class="pr-btns"><button type="button" class="gold" id="plateRollFree">Бесплатно</button><button type="button" id="plateRollPaid">Крутить</button></div>
-  </div>
   <div class="pe-actions one"><button id="plateStoreToggle" class="secondary" type="button" aria-expanded="false">Хранилище номеров</button></div>
-  <div class="plate-store hidden" id="plateStoreBox"><div class="ps-list" id="plateStoreList"></div><button id="plateToStoreBtn" class="secondary ps-take" type="button">Снять текущий номер в хранилище</button><div class="pe-rules">Номера нельзя купить напрямую: их можно выиграть в розыгрыше номера или в кейсе NIGHT TUNER. Лишние номера можно продать.</div></div></div>
+  <div class="plate-store hidden" id="plateStoreBox"><div class="ps-list" id="plateStoreList"></div><button id="plateToStoreBtn" class="secondary ps-take" type="button">Снять текущий номер в хранилище</button><div class="pe-rules">Номера нельзя купить напрямую: они выпадают только из кейса NIGHT TUNER. Лишние номера можно продать.</div></div></div>
   <div class="filters">
     <input class="field search" id="garageSearch" placeholder="Найти в гараже…"><button type="button" class="filt-btn">Фильтры</button>
     <select class="field" id="garageSort"><option value="name">Название: А–Я</option><option value="income">Доход: по убыванию</option><option value="tune">Тюнинг: по убыванию</option><option value="value">Стоимость: по убыванию</option><option value="count">Количество: по убыванию</option></select>
@@ -964,9 +956,20 @@ function load(){
 let s=load(),toastTimer;
 const fmt=n=>Math.floor(Number(n)||0).toLocaleString("ru-RU");
 const fmtRate=n=>{n=Number(n)||0;return n>=10?fmt(n):(Math.round(n*10)/10).toLocaleString("ru-RU")};
+// ==================== БАЛАНС ЭКОНОМИКИ ====================
+// Все «рычаги» сложности собраны здесь: меняй числа, чтобы сделать игру легче или тяжелее.
+const ECON={
+  slowFrom:10000,   // машины дешевле этой цены окупаются как раньше
+  slowPower:0.85,   // чем больше, тем медленнее окупаются дорогие машины (было 0 — доход рос без торможения)
+  levelStep:0.01,   // бонус к доходу за каждый уровень (было 0.02)
+  offlineRate:0.5,  // какая часть дохода начисляется, пока игры нет на экране (было 1)
+  collectSec:6,     // «Быстрый сбор» даёт столько секунд дохода (было 3, но без ограничений по частоте)
+  collectCd:20      // и доступен не чаще, чем раз в столько секунд
+};
+const incomeScale=price=>price<=ECON.slowFrom?1:Math.pow(ECON.slowFrom/price,ECON.slowPower);
 let incomeCarry=0;
 const getCar=id=>cars.find(c=>c.id===id);
-const carIncome=id=>{const c=getCar(id);return c?(c.income*0.30*tuneMult(id)):0};
+const carIncome=id=>{const c=getCar(id);return c?(c.income*0.30*tuneMult(id)*incomeScale(basePrice(c))):0};
 const boostMult=()=>(s.boost&&s.boost.until>Date.now())?(Number(s.boost.mult)||1):1;
 const income=()=>cars.reduce((sum,c)=>sum+(s.owned[c.id]||0)*carIncome(c.id),0)*boostMult()*levelMult();
 const ownedTotal=()=>cars.reduce((n,c)=>n+(s.owned[c.id]||0),0);
@@ -995,7 +998,7 @@ function levelTitle(lv){
   const t=[[1,"Новичок"],[3,"Гонщик двора"],[5,"Уличный гонщик"],[8,"Тюнер"],[11,"Коллекционер"],[15,"Автобосс"],[19,"Магнат"],[24,"Легенда улиц"],[30,"Король гаражей"],[38,"Авто-император"],[50,"Живая легенда"]];
   let name=t[0][1];for(const [min,n] of t){if(lv>=min)name=n}return name;
 }
-function levelMult(){return 1+0.02*(playerLevel()-1)}
+function levelMult(){return 1+ECON.levelStep*(playerLevel()-1)}
 function levelBonus(lv){return 100*lv*(lv%5===0?3:1)}
 let _lastLv=playerLevel();
 function resetLevelTracking(){_lvCache={xp:-1,val:null};_lastLv=playerLevel()}
@@ -1044,7 +1047,19 @@ function renderLevelTrack(){
 }
 // addMoney: все начисления идут в XP; пачка уровней = один тост и одна награда
 function addMoney(n){n=Math.max(0,Math.floor(n));s.money+=n;s.totalEarned=(Number(s.totalEarned)||0)+n;checkLevelUp()}
-function collect(){const n=Math.max(1,Math.floor(income()*3));addMoney(n);render();save();haptic();toast("+"+fmt(n)+" ◈ получено");syncScore()}
+let collectReadyAt=0;
+function collect(){
+  if(Date.now()<collectReadyAt)return;
+  const n=Math.max(1,Math.floor(income()*ECON.collectSec));
+  collectReadyAt=Date.now()+ECON.collectCd*1000;
+  addMoney(n);render();save();haptic();toast("+"+fmt(n)+" ◈ получено");syncScore();updateCollectButton();
+}
+function updateCollectButton(){
+  const b=document.getElementById("collectBtn");if(!b)return;
+  const left=Math.ceil((collectReadyAt-Date.now())/1000);
+  if(left>0){b.disabled=true;b.textContent="Сбор через "+left+" с"}
+  else if(b.disabled||b.textContent!=="Быстрый сбор"){b.disabled=false;b.textContent="Быстрый сбор"}
+}
 const REGION_DATA=[
 ["Адыгея",["01"]],["Башкортостан",["02","102","702"]],["Бурятия",["03","103"]],["Алтай",["04"]],["Дагестан",["05"]],["Ингушетия",["06"]],["Кабардино-Балкария",["07"]],["Калмыкия",["08"]],["Карачаево-Черкесия",["09"]],["Карелия",["10"]],["Коми",["11"]],["Марий Эл",["12"]],["Мордовия",["13","113"]],["Саха (Якутия)",["14"]],["Северная Осетия",["15"]],["Татарстан",["16","116","716"]],["Тыва",["17"]],["Удмуртия",["18","118"]],["Хакасия",["19"]],["Чечня",["20","95"]],["Чувашия",["21","121"]],["Алтайский край",["22","122"]],["Краснодарский край",["23","93","123"]],["Красноярский край",["24","84","88","124"]],["Приморский край",["25","125"]],["Ставропольский край",["26","126"]],["Хабаровский край",["27"]],["Амурская область",["28"]],["Архангельская область",["29"]],["Астраханская область",["30"]],["Белгородская область",["31"]],["Брянская область",["32"]],["Владимирская область",["33"]],["Волгоградская область",["34","134"]],["Вологодская область",["35"]],["Воронежская область",["36","136"]],["Ивановская область",["37"]],["Иркутская область",["38","85","138"]],["Калининградская область",["39","91"]],["Калужская область",["40"]],["Камчатский край",["41"]],["Кемеровская область",["42","142"]],["Кировская область",["43"]],["Костромская область",["44"]],["Курганская область",["45"]],["Курская область",["46"]],["Ленинградская область",["47"]],["Липецкая область",["48"]],["Магаданская область",["49"]],["Московская область",["50","90","150","190","750","790"]],["Мурманская область",["51"]],["Нижегородская область",["52","152"]],["Новгородская область",["53"]],["Новосибирская область",["54","154"]],["Омская область",["55"]],["Оренбургская область",["56"]],["Орловская область",["57"]],["Пензенская область",["58"]],["Пермский край",["59","81","159"]],["Псковская область",["60"]],["Ростовская область",["61","161","761"]],["Рязанская область",["62"]],["Самарская область",["63","163","763"]],["Саратовская область",["64","164"]],["Сахалинская область",["65"]],["Свердловская область",["66","96","196"]],["Смоленская область",["67"]],["Тамбовская область",["68"]],["Тверская область",["69"]],["Томская область",["70"]],["Тульская область",["71"]],["Тюменская область",["72"]],["Ульяновская область",["73","173"]],["Челябинская область",["74","174","774"]],["Забайкальский край",["75","80"]],["Ярославская область",["76"]],["Москва",["77","97","99","177","197","199","777","799"]],["Санкт-Петербург",["78","98","178","198"]],["Еврейская АО",["79"]],["Крым",["82"]],["Ненецкий АО",["83"]],["ХМАО",["86","186"]],["Чукотка",["87"]],["ЯНАО",["89"]],["Севастополь",["92"]],["Байконур",["94"]]
 ];
@@ -1082,7 +1097,7 @@ function plateTaken(letters,region,exceptId){
  if(plateInStore(letters,region))return true;
  return Object.entries(s.plates||{}).some(([id,p])=>id!==exceptId&&(s.owned[id]||0)>0&&p&&p.letters===letters&&String(p.region)===String(region));
 }
-function makePlate(region="77",exceptId){
+function makePlate(region=randomRegion(),exceptId){
  const pick=()=>PLATE_LETTERS[Math.floor(Math.random()*PLATE_LETTERS.length)];
  for(let i=0;i<60;i++){
   const l=pick()+String(Math.floor(Math.random()*999)+1).padStart(3,"0")+pick()+pick();
@@ -1090,12 +1105,25 @@ function makePlate(region="77",exceptId){
  }
  return {letters:"А001АА",region:String(region)};
 }
+// Регион номера выбирается случайно из всех существующих (раньше всегда был 77)
+function randomRegion(){return REGION_CODES[Math.floor(Math.random()*REGION_CODES.length)]}
 function plateValid(p){return !!(p&&typeof p.letters==="string"&&!validatePlate(p.letters)&&REGION_NAME[String(p.region)])}
+// Одноразовая миграция: у всех обычных номеров был регион 77, раздаём им разные регионы.
+// Красивые, редкие и эксклюзивные номера не трогаем: их регион остаётся как есть.
+(function migratePlateRegions(){
+ if(s.plateRegionsV2)return;
+ s.plateRegionsV2=true;
+ if(s.plates)for(const pid of Object.keys(s.plates)){
+  const pl=s.plates[pid];
+  if(plateValid(pl)&&String(pl.region)==="77"&&PLATE_TIERS.indexOf(plateTier(pl.letters))===0)pl.region=randomRegion();
+ }
+ save();
+})();
 function ensurePlate(id){
  if(noPlate(id))return NO_PLATE_STUB;
  if(!s.plates)s.plates={};
  if(!plateValid(s.plates[id])){
-  const old=s.plates[id],reg=old&&REGION_NAME[String(old.region)]?String(old.region):"77";
+  const old=s.plates[id],reg=old&&REGION_NAME[String(old.region)]?String(old.region):randomRegion();
   s.plates[id]=makePlate(reg,id);save();
  }
  return s.plates[id];
@@ -1147,7 +1175,7 @@ function renderPlatePanel(){
   byId("plateStoreList").innerHTML=items.length?items.map(({p,i})=>{
    const tt=plateTier(p.letters);
    return `<div class="ps-item"><div class="ps-plate">${plateHtml(p)}</div><div class="ps-meta"><span class="pe-tier t-${tt.id}">${tt.name}</span><small>${escapeHtml(REGION_NAME[String(p.region)]||"")}</small></div><div class="ps-btns"><button type="button" data-plate-install="${i}" ${np?"disabled":""}>Установить</button><button type="button" class="danger" data-plate-sell="${i}">Продать · ${fmt(PLATE_SELL[tt.id]||0)} ◈</button></div></div>`;
-  }).join(""):'<div class="empty">Хранилище пусто. Красивые, редкие и эксклюзивные номера выпадают в розыгрыше номера и в кейсе NIGHT TUNER.</div>';
+  }).join(""):'<div class="empty">Хранилище пусто. Красивые, редкие и эксклюзивные номера разных регионов выпадают только из кейса NIGHT TUNER.</div>';
 }
 function installStoredPlate(i){
   const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
@@ -1172,7 +1200,7 @@ function plateToStore(){
   if(noPlate(id))return toast("У этой машины нет номера");
   const cur=ensurePlate(id);
   if(plateTier(cur.letters).id==="basic")return toast("Обычный номер выдаётся бесплатно и в хранилище не кладётся");
-  stashPlate(cur);s.plates[id]=makePlate(cur.region,id);
+  stashPlate(cur);s.plates[id]=makePlate(randomRegion(),id);
   render();save();haptic("light");toast("Номер "+cur.letters+" "+cur.region+" перемещён в хранилище");
 }
 function buy(id){const c=getCar(id);if(!c)return;if(id==="bmwm5e60")return toast("🔒 BMW M5 E60 — секретный автомобиль. Выпадает только из кейса NIGHT TUNER!");if(id==="camry")return toast("🔒 Toyota Camry — секретный автомобиль. Получить его пока невозможно");if((s.owned[id]||0)>=1)return toast("В гараже уже есть эта модель — можно купить только один экземпляр");if(ownedTotal()>=slotMax())return toast("Гараж заполнен — купи место или продай автомобиль");if(s.money<c.price)return toast("Не хватает монет");s.money-=c.price;s.owned[id]=1;s.selected=id;render();save();haptic();toast(c.name+" куплен!");syncScore()}
@@ -1185,7 +1213,7 @@ function streetRace(){
  const classBonus={sedan:0,sport:5,suv:2,luxury:4,hyper:10};
  const chance=Math.min(0.78,0.52+(classBonus[c.class]||0)/100+Math.min(.10,level*.02));
  const won=Math.random()<chance;
- const prize=Math.max(30,Math.floor(basePrice(c)*(.018+Math.random()*.025)*(1+Math.min(level,10)*.04)));
+ const prize=Math.max(30,Math.floor(basePrice(c)*incomeScale(basePrice(c))*(.018+Math.random()*.025)*(1+Math.min(level,10)*.04)));
  if(won){addMoney(prize);save();renderStats();syncScore();haptic("heavy");toast("🏆 Победа в заезде! +"+fmt(prize)+" ◈");}
  else {haptic("light");toast("Финиш вторым! Попробуй снова через 45 секунд.");}
  document.getElementById("raceHint").textContent=won?"Победа! Награда получена — следующий заезд через 45 сек.":"Не повезло на этот раз. Следующий заезд через 45 сек.";
@@ -1295,13 +1323,14 @@ const CASES={
   {label:"200 000 ◈",weight:9,type:"money",amount:200000,icon:"◈",desc:"Деньги"},
   {label:"500 000 ◈",weight:3,type:"money",amount:500000,icon:"◈",desc:"Деньги"},
   {label:"Случайное авто",weight:17,type:"car",icon:"🚘",desc:"Модель до 150 000 ◈"}]},
- tuner:{name:"NIGHT TUNER",emblem:"NT",cost:250000,note:"Тюнерский кейс: бусты дохода, редкие номера в хранилище, гиперкары, крупные суммы и секретная BMW M5 E60. Бусты суммируют время.",prizes:[
-  {label:"150 000 ◈",weight:26,type:"money",amount:150000,icon:"◈",desc:"Деньги"},
-  {label:"300 000 ◈",weight:20,type:"money",amount:300000,icon:"◈",desc:"Деньги"},
-  {label:"750 000 ◈",weight:9,type:"money",amount:750000,icon:"◈",desc:"Деньги"},
-  {label:"2 000 000 ◈",weight:2,type:"money",amount:2000000,icon:"💰",desc:"Крупный выигрыш"},
+ tuner:{name:"NIGHT TUNER",emblem:"NT",cost:250000,note:"Тюнерский кейс: бусты дохода, номера разных регионов в хранилище, гиперкары, крупные суммы и секретная BMW M5 E60. Бусты суммируют время.",prizes:[
+  {label:"100 000 ◈",weight:26,type:"money",amount:100000,icon:"◈",desc:"Деньги"},
+  {label:"200 000 ◈",weight:20,type:"money",amount:200000,icon:"◈",desc:"Деньги"},
+  {label:"500 000 ◈",weight:9,type:"money",amount:500000,icon:"◈",desc:"Деньги"},
+  {label:"1 500 000 ◈",weight:2,type:"money",amount:1500000,icon:"💰",desc:"Крупный выигрыш"},
   {label:"Буст дохода ×2",weight:16,type:"boost",mult:2,minutes:15,icon:"⚡",desc:"Доход ×2 на 15 минут"},
   {label:"Буст дохода ×3",weight:5,type:"boost",mult:3,minutes:30,icon:"🚀",desc:"Доход ×3 на 30 минут"},
+  {label:"Красивый номер",weight:14,type:"plate",minTier:1,icon:"🔢",desc:"Красивый номер или лучше в хранилище"},
   {label:"Редкий номер",weight:10,type:"plate",minTier:2,icon:"🔢",desc:"Редкий или эксклюзивный номер в хранилище"},
   {label:"Эксклюзивный номер",weight:2,type:"plate",minTier:3,icon:"👑",desc:"Номер класса «Эксклюзив» в хранилище"},
   {label:"Гиперкар",weight:9,type:"hypercar",icon:"🏎️",desc:"Случайный авто дороже 150 000 ◈"},
@@ -1347,16 +1376,16 @@ function grantRoulettePrize(prize){
   const hyper=prize.type==="hypercar";
   const pool=cars.filter(c=>!isSecretCar(c.id)&&c.id!=="amgone"&&!own(c.id)&&(hyper?c.price>ROULETTE_CAR_MAX_PRICE:c.price<=ROULETTE_CAR_MAX_PRICE));
   if(pool.length){const c=pool[Math.floor(Math.random()*pool.length)];s.owned[c.id]=1;s.selected=c.id;lastPrizeName=c.name;return `🚘 Выигран автомобиль: ${c.name}!`}
-  const comp=hyper?500000:100000;addMoney(comp);lastPrizeName=fmt(comp)+" ◈";return `🚘 Все подходящие автомобили уже в гараже — компенсация ${fmt(comp)} ◈`;
+  const comp=hyper?300000:100000;addMoney(comp);lastPrizeName=fmt(comp)+" ◈";return `🚘 Все подходящие автомобили уже в гараже — компенсация ${fmt(comp)} ◈`;
  }
  if(prize.type==="jackpot"){
   const c=getCar(prize.carId);
   if(c&&!own(c.id)){s.owned[c.id]=1;s.selected=c.id;return `💎 ДЖЕКПОТ! ${c.name} теперь в твоём гараже!`}
-  addMoney(1500000);lastPrizeName="1 500 000 ◈";return "💎 Джекпот уже в гараже — компенсация 1 500 000 ◈";
+  addMoney(1000000);lastPrizeName="1 000 000 ◈";return "💎 Джекпот уже в гараже — компенсация 1 000 000 ◈";
  }
  if(prize.type==="boost"){addBoost(prize.mult,prize.minutes);return `⚡ Буст дохода ×${prize.mult} на ${prize.minutes} мин!`}
  if(prize.type==="plate"){
-  const id=s.selected,cur=ensurePlate(id),p=makePlateOfTier(prize.minTier,cur.region,id);
+  const id=s.selected,p=makePlateOfTier(prize.minTier,randomRegion(),id);
   if(PLATE_TIERS.indexOf(plateTier(p.letters))<prize.minTier){addMoney(100000);lastPrizeName="100 000 ◈";return "🔢 Подходящий номер не нашёлся — компенсация 100 000 ◈"}
   stashPlate(p);lastPrizeName=p.letters+" "+p.region;
   return `🔢 Номер «${plateTier(p.letters).name}» в хранилище: ${p.letters} ${p.region}`;
@@ -1419,95 +1448,7 @@ function spinRoulette(){
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-case]");if(b)setCase(b.dataset.case)});
 setCase("street");
-// ===== Розыгрыш номера (5.3): случайный номер от обычного до эксклюзива =====
-const PLATE_ROLL={cost:15000,freeMs:30*60000,odds:[60,28,10,2]}; // шансы по классам: обычный/красивый/редкий/эксклюзив (%)
-let plateRollBusy=false,plateRollPending=null,plateRollTimer=0;
-const PR_POOL=["001","007","100","200","300","400","500","600","700","800","900","111","222","333","444","555","666","777","888","999","123","234","345","456","567","678","789","321","432","543","654","765","876","987"];
-function plateRollPick(){return PLATE_LETTERS[Math.floor(Math.random()*PLATE_LETTERS.length)]}
-function makePlateExact(idx,region,id){
- for(let i=0;i<800;i++){
-  const special=idx>0&&Math.random()<.8;
-  const d=special?PR_POOL[Math.floor(Math.random()*PR_POOL.length)]:String(Math.floor(Math.random()*999)+1).padStart(3,"0");
-  const a=plateRollPick(),triple=idx>0&&Math.random()<.5;
-  const l=a+d+(triple?a+a:plateRollPick()+plateRollPick());
-  if(validatePlate(l)||PLATE_TIERS.indexOf(plateTier(l))!==idx||plateTaken(l,region,id))continue;
-  return {letters:l,region:String(region)};
- }
- return null;
-}
-function plateRollTier(){
- const odds=PLATE_ROLL.odds;let t=Math.random()*odds.reduce((a,b)=>a+b,0);
- for(let i=0;i<odds.length;i++){t-=odds[i];if(t<0)return i}return 0;
-}
-function drawRollPlate(region,id){
- for(let t=plateRollTier();t>=0;t--){const p=makePlateExact(t,region,id);if(p)return p}
- return makePlate(region,id);
-}
-function plateRollStageHtml(p){return `<div class="pr-plate">${plateHtml(p)}</div>`}
-function initPlateRoll(){
- const el=byId("plateRollOdds");if(!el)return;
- el.innerHTML=PLATE_TIERS.map((t,i)=>`<div class="pr-odd t-${t.id}">${t.name}<i>${PLATE_ROLL.odds[i]}%</i></div>`).join("");
- byId("plateRollFree").addEventListener("click",()=>startPlateRoll(false));
- byId("plateRollPaid").addEventListener("click",()=>startPlateRoll(true));
- byId("plateRollInstall").addEventListener("click",plateRollInstall);
- byId("plateRollKeep").addEventListener("click",plateRollKeep);
- updatePlateRollUi();
-}
-function updatePlateRollUi(){
- const free=byId("plateRollFree"),paid=byId("plateRollPaid");if(!free||!paid)return;
- const left=Math.max(0,Math.ceil(((s.plateFreeAt||0)-Date.now())/1000));
- free.disabled=plateRollBusy||left>0;
- free.textContent=left>0?"🎁 Бесплатно через "+Math.floor(left/60)+":"+String(left%60).padStart(2,"0"):"🎁 Бесплатно";
- paid.disabled=plateRollBusy||s.money<PLATE_ROLL.cost;
- paid.textContent="🎲 Крутить · "+fmt(PLATE_ROLL.cost)+" ◈";
-}
-function startPlateRoll(paid){
- if(plateRollBusy)return;
- const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
- if(noPlate(id))return toast("На эту машину нельзя ставить номера. Выбери в гараже другую");
- if(paid){if(s.money<PLATE_ROLL.cost)return toast("Для розыгрыша нужно "+fmt(PLATE_ROLL.cost)+" ◈");s.money-=PLATE_ROLL.cost}
- else{if((s.plateFreeAt||0)>Date.now())return;s.plateFreeAt=Date.now()+PLATE_ROLL.freeMs}
- plateRollBusy=true;plateRollPending=null;
- const cur=ensurePlate(id),p=drawRollPlate(cur.region,id),tier=plateTier(p.letters);
- if(tier.id!=="basic")stashPlate(p); // результат сразу сохраняется — не потеряется, даже если закрыть игру
- plateRollPending={p,tier:tier.id};
- save();renderStats();updatePlateRollUi();
- byId("plateRollAfter").classList.add("hidden");byId("plateRollResult").innerHTML="";
- const stage=byId("plateRollStage");stage.className="pr-stage rolling";
- const spin=()=>{const fake=plateRollPick()+String(Math.floor(Math.random()*999)+1).padStart(3,"0")+plateRollPick()+plateRollPick();stage.innerHTML=plateRollStageHtml({letters:fake,region:cur.region})};
- spin();clearInterval(plateRollTimer);plateRollTimer=setInterval(spin,70);
- setTimeout(()=>{
-  clearInterval(plateRollTimer);
-  stage.className="pr-stage reveal s-"+tier.id;stage.innerHTML=plateRollStageHtml(p);
-  const stored=tier.id!=="basic";
-  byId("plateRollResult").innerHTML=`<span class="pe-tier t-${tier.id}">${tier.name}</span><span>${stored?"Добавлен в хранилище":"Обычные номера не хранятся"}</span>`;
-  byId("plateRollKeep").textContent=stored?"🗄 Открыть хранилище":"Оставить текущий";
-  byId("plateRollAfter").classList.remove("hidden");
-  plateRollBusy=false;render();save();haptic(tier.id==="basic"?"light":"heavy");syncScore();
-  toast(stored?"Выпал номер: "+p.letters+" "+p.region+" · "+tier.name:"Выпал обычный номер: "+p.letters+" "+p.region);
- },1500);
-}
-function plateRollInstall(){
- const r=plateRollPending;if(!r)return;
- if(r.tier==="basic"){
-  const id=s.selected;if(!(s.owned[id]||0))return toast("Сначала выбери автомобиль в гараже");
-  if(noPlate(id))return toast("На эту машину нельзя установить номер");
-  const old=ensurePlate(id);s.plates[id]={letters:r.p.letters,region:String(r.p.region)};stashPlate(old);
-  render();save();haptic();toast("Номер установлен: "+r.p.letters+" "+r.p.region);
- }else{
-  const i=storeList().findIndex(q=>q.letters===r.p.letters&&String(q.region)===String(r.p.region));
-  if(i<0){byId("plateRollAfter").classList.add("hidden");plateRollPending=null;return toast("Этого номера уже нет в хранилище")}
-  installStoredPlate(i);
- }
- plateRollPending=null;byId("plateRollAfter").classList.add("hidden");
-}
-function plateRollKeep(){
- const r=plateRollPending;
- if(r&&r.tier!=="basic"){plateStoreOpen=true;renderPlatePanel();byId("plateStoreBox").scrollIntoView({behavior:"smooth",block:"nearest"})}
- else toast("Оставлен текущий номер");
- plateRollPending=null;byId("plateRollAfter").classList.add("hidden");
-}
-function render(){renderStats();renderShop();renderGarage();renderPlatePanel();updatePlateRollUi();renderSheet();renderAuction();}
+function render(){renderStats();renderShop();renderGarage();renderPlatePanel();renderSheet();renderAuction();}
 // ==================== 6.0: ТЮНИНГ · МЕСТА В ГАРАЖЕ · АУКЦИОН · НАВИГАЦИЯ ====================
 // ---- Тюнинг: 4 детали, 5 уровней каждая, бонус к доходу конкретной машины
 var TUNE_PARTS=[
@@ -1730,7 +1671,6 @@ function switchTab(tab){
  setInterval(auTick,1000);
 })();
 
-initPlateRoll();setInterval(updatePlateRollUi,1000);
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
 document.getElementById("collectBtn").addEventListener("click",collect);
 document.getElementById("heroTuneBtn").addEventListener("click",()=>openCarSheet(s.selected));
@@ -1877,9 +1817,9 @@ async function checkGrants(){
  if(names.length){render();save();haptic("heavy");toast("🎁 Тебе выдана машина: "+names.join(", "));syncScore()}
  if(done.length){try{await fetch(API_BASE+"/grants/ack",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg.initData,ids:done})})}catch(e){}}
 }
-const elapsed=Math.min(7200,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income());addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
+const elapsed=Math.min(7200,Math.max(0,(Date.now()-(s.lastTime||Date.now()))/1000));if(elapsed>0){const away=Math.floor(elapsed*income()*ECON.offlineRate);addMoney(away);if(away>0)toast("Пока тебя не было: +"+fmt(away)+" ◈")}
 s.lastTime=Date.now();cleanStore();render();auTick();switchTab("home");save();document.getElementById("telegramPlayerName").textContent=telegramName();syncScore();renderLeaderboard();checkGrants();
-setInterval(()=>{incomeCarry+=income();const whole=Math.floor(incomeCarry);if(whole>0){incomeCarry-=whole;addMoney(whole)}renderStats();updateRaceButton()},1000);
+setInterval(()=>{incomeCarry+=income();const whole=Math.floor(incomeCarry);if(whole>0){incomeCarry-=whole;addMoney(whole)}renderStats();updateRaceButton();updateCollectButton()},1000);
 setInterval(save,5000);
 setInterval(()=>{syncScore();checkGrants();if(!document.getElementById("rankingPanel").classList.contains("hidden"))renderLeaderboard()},25000);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)save();else checkGrants()});window.addEventListener("pagehide",save);
